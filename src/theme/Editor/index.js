@@ -29,10 +29,11 @@ export default function Editor({options}) {
     ],
     autofocus: 'start',
     onBeforeCreate: async ({ editor }) => {
-      let path = window.location.pathname.slice(url.length)
+      const params = new URLSearchParams(window.location.search)
+      const filePath = params.get('path')
 
-      if (path) {
-        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${options.path}${path}.md`)
+      if (filePath) {
+        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${options.path}${filePath}.md`)
         if (response.ok) {
           let text = await response.text()
 

@@ -29,7 +29,7 @@ export default function EditThisPage({editUrl}) {
   return (
     <>
       { docPath &&
-        <a href={useBaseUrl('/edit' + docPath)} target="_blank" rel="noreferrer noopener">
+        <a href={useBaseUrl('/edit?path=' + encodeURIComponent(docPath))} target="_blank" rel="noreferrer noopener">
           <IconEdit />
         </a>
       }
