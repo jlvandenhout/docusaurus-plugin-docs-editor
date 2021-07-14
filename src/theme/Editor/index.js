@@ -1,4 +1,5 @@
 import React from 'react'
+import useBaseUrl from '@docusaurus/useBaseUrl'
 import { useEditor } from '@tiptap/react'
 import clsx from 'clsx'
 import StarterKit from '@tiptap/starter-kit'
@@ -20,17 +21,18 @@ export default function Editor({options}) {
     }
   } = useDocusaurusContext()
 
+  const url = useBaseUrl('edit')
+
   const editor = useEditor({
     extensions: [
       StarterKit,
     ],
     autofocus: 'start',
     onBeforeCreate: async ({ editor }) => {
-      let path = window.location.pathname
-      let filePath = path.replace(/^\/edit/, '')
+      let path = window.location.pathname.slice(url.length)
 
-      if (filePath) {
-        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${options.path}${filePath}.md`)
+      if (path) {
+        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${options.path}${path}.md`)
         if (response.ok) {
           let text = await response.text()
 

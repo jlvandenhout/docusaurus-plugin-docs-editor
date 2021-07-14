@@ -1,6 +1,8 @@
 const path = require('path')
 
 module.exports = function pluginDocsEditor(context, options) {
+  const { baseUrl } = context
+
   return {
     name: 'docusaurus-plugin-docs-editor',
     getThemePath() {
@@ -15,7 +17,7 @@ module.exports = function pluginDocsEditor(context, options) {
       );
 
       addRoute({
-        path: '/edit',
+        path: baseUrl + 'edit',
         exact: false,
         component: '@theme/Editor',
         modules: {

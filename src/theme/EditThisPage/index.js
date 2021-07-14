@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 import React from 'react';
-import { useLocation } from '@docusaurus/router';
+import { useLocation } from '@docusaurus/router'
+import useBaseUrl from '@docusaurus/useBaseUrl'
 import { useActivePlugin } from '@theme/hooks/useDocs'
 import IconEdit from '@theme/IconEdit';
 import IconGithub from '@theme/IconGithub';
@@ -28,7 +29,7 @@ export default function EditThisPage({editUrl}) {
   return (
     <>
       { docPath &&
-        <a href={'/edit' + docPath} target="_blank" rel="noreferrer noopener">
+        <a href={useBaseUrl('/edit' + docPath)} target="_blank" rel="noreferrer noopener">
           <IconEdit />
         </a>
       }
