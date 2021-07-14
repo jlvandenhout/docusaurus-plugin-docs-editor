@@ -1,0 +1,23 @@
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+
+  color: var(--ifm-color-gray-100);
+  background-color: transparent;
+
+  border-radius: var(--ifm-global-radius);
+  height: 2rem;
+  width: 2rem;
+}
+
+.icon:hover {
+  background-color: var(--ifm-color-gray-800);
+}
+
+.icon:global(.active) {
+  color: var(--ifm-color-gray-200);
+  background-color: var(--ifm-color-gray-700);
+}

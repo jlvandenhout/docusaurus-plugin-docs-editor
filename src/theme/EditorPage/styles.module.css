@@ -1,0 +1,13 @@
+.page {
+  flex-grow: 1;
+  background-color: var(--ifm-color-emphasis-100);
+  overflow-y: auto;
+}
+
+.content {
+  background-color: var(--ifm-color-emphasis-0);
+  box-shadow: 0 0 .5rem var(--ifm-color-emphasis-400);
+  min-height: 100%;
+  padding: 5% 10%;
+  margin: 0 15%;
+}
