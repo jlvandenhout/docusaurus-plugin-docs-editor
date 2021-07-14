@@ -12,7 +12,7 @@ import stringify from 'rehype-stringify'
 import EditorPage from '@theme/EditorPage'
 import './index.css'
 
-export default function Editor() {
+export default function Editor({options}) {
   const {
     siteConfig: {
       organizationName,
@@ -26,11 +26,11 @@ export default function Editor() {
     ],
     autofocus: 'start',
     onBeforeCreate: async ({ editor }) => {
-      let parameters = new URLSearchParams(window.location.search)
-      let path = parameters.get("path")
+      let path = window.location.pathname
+      let filePath = path.replace(/^\/edit/, '')
 
-      if (path) {
-        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/develop${path}`)
+      if (filePath) {
+        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${options.path}${filePath}.md`)
         if (response.ok) {
           let text = await response.text()
 

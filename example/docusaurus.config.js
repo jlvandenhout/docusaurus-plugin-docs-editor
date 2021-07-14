@@ -93,13 +93,13 @@ module.exports = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            'https://github.com/jlvandenhout/docusaurus-plugin-docs-editor/tree/master/example/',
+            'https://github.com/jlvandenhout/docusaurus-plugin-docs-editor/edit/master/example/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            'https://github.com/jlvandenhout/docusaurus-plugin-docs-editor/tree/master/example/blog/',
+            'https://github.com/jlvandenhout/docusaurus-plugin-docs-editor/edit/master/example/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -108,6 +108,11 @@ module.exports = {
     ],
   ],
   plugins: [
-    './..',
+    [
+      './..',
+      {
+        path: '/example/docs'
+      }
+    ]
   ]
 };

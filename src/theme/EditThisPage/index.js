@@ -5,19 +5,33 @@
  * LICENSE file in the root directory of this source tree.
  */
 import React from 'react';
+import { useLocation } from '@docusaurus/router';
+import { useActivePlugin } from '@theme/hooks/useDocs'
 import IconEdit from '@theme/IconEdit';
 import IconGithub from '@theme/IconGithub';
 
 export default function EditThisPage({editUrl}) {
-  const localEditUrl = () => {
-    const url = new URL(window.location.href)
-    return '/edit' + url.pathname
+  const { pathname } = useLocation()
+  const activePlugin = useActivePlugin()
+
+  const getPath = () => {
+    if (activePlugin) {
+      const pathnameBase = activePlugin.pluginData.path
+      if (pathname.startsWith(pathnameBase)) {
+        return pathname.slice(pathnameBase.length)
+      }
+    }
   }
+
+  const docPath = getPath()
+
   return (
     <>
-      <a href={localEditUrl()} target="_blank" rel="noreferrer noopener">
-        <IconEdit />
-      </a>
+      { docPath &&
+        <a href={'/edit' + docPath} target="_blank" rel="noreferrer noopener">
+          <IconEdit />
+        </a>
+      }
       <a href={editUrl} target="_blank" rel="noreferrer noopener">
         <IconGithub />
       </a>

@@ -6,17 +6,22 @@ module.exports = function pluginDocsEditor(context, options) {
     getThemePath() {
       return path.resolve(__dirname, './theme')
     },
-    getPathsToWatch() {
-      const contentPath = path.resolve(context.siteDir, options.path ?? '')
-      return [`${contentPath}/**/*.{js,jsx}`]
-    },
     async contentLoaded({ actions }) {
-      const { addRoute } = actions
+      const { createData, addRoute } = actions
+
+      const optionsPath = await createData(
+        'editor.json',
+        JSON.stringify(options),
+      );
 
       addRoute({
         path: '/edit',
         exact: false,
         component: '@theme/Editor',
+        modules: {
+          // propName -> JSON file path
+          options: optionsPath,
+        },
       })
     },
   }
