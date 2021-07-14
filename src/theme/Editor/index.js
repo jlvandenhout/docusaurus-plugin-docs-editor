@@ -11,7 +11,7 @@ import frontmatter from 'remark-frontmatter'
 import remark2rehype from 'remark-rehype'
 import stringify from 'rehype-stringify'
 import EditorPage from '@theme/EditorPage'
-import './index.css'
+import styles from './styles.module.css'
 
 export default function Editor({options}) {
   const {
@@ -51,7 +51,7 @@ export default function Editor({options}) {
   })
 
   return (
-    <div className='editor'>
+    <div className={clsx(styles.editor)}>
       <EditorMenu editor={editor} />
       <EditorPage editor={editor} />
     </div>
