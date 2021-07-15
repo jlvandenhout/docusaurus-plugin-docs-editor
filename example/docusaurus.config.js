@@ -111,7 +111,10 @@ module.exports = {
     [
       './..',
       {
-        path: '/example/docs'
+        path: '/example/docs',
+        github: {
+          clientId: '325481063e5c1fc9dd57'
+        }
       }
     ]
   ]

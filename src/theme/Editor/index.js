@@ -1,10 +1,10 @@
-import React from 'react'
-import useBaseUrl from '@docusaurus/useBaseUrl'
+import React, { useEffect, useState } from 'react'
 import { useEditor } from '@tiptap/react'
 import clsx from 'clsx'
 import StarterKit from '@tiptap/starter-kit'
 import EditorMenu from '@theme/EditorMenu'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
+import useBaseUrl from '@docusaurus/useBaseUrl'
 import unified from 'unified'
 import markdown from 'remark-parse'
 import frontmatter from 'remark-frontmatter'
@@ -20,8 +20,33 @@ export default function Editor({options}) {
       projectName,
     }
   } = useDocusaurusContext()
+  const [token, setToken] = useState(null)
+  const baseUrl = useBaseUrl('/edit')
 
-  const url = useBaseUrl('edit')
+  const getCode = () => {
+    const url = new URL('https://github.com/login/oauth/authorize')
+    const parameters = url.searchParams
+    parameters.append('client_id', options.github.clientId)
+    parameters.append('redirect_uri', window.location.href)
+    window.location.replace(url.href)
+  }
+
+  const getToken = (code) => {
+    localStorage.setItem('token', `[TOKEN_FROM_CODE: ${code}]`)
+
+    window.location.replace(window.location.origin + window.location.pathname)
+  }
+
+  const updateToken = (event) => {
+    if (!event.key || event.key === 'token') {
+      setToken(event.newValue)
+    }
+  }
+
+  const logOut = () => {
+    setToken(null)
+    localStorage.removeItem('token')
+  }
 
   const editor = useEditor({
     extensions: [
@@ -29,11 +54,11 @@ export default function Editor({options}) {
     ],
     autofocus: 'start',
     onBeforeCreate: async ({ editor }) => {
-      const params = new URLSearchParams(window.location.search)
-      const filePath = params.get('path')
+      const url = new URL(window.location.href)
+      const path = url.pathname.slice(baseUrl.length)
 
-      if (filePath) {
-        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${options.path}${filePath}.md`)
+      if (path) {
+        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${options.path}${path}.md`)
         if (response.ok) {
           let text = await response.text()
 
@@ -51,10 +76,32 @@ export default function Editor({options}) {
     },
   })
 
+  useEffect(() => {
+    window.addEventListener('storage', updateToken)
+
+    const token = localStorage.getItem('token')
+    if (localStorage.getItem('token')) {
+      setToken(token)
+    } else {
+      const parameters = new URLSearchParams(window.location.search)
+      if (parameters.has('code')) {
+        getToken(parameters.get('code'))
+      } else {
+        getCode()
+      }
+    }
+  }, [])
+
   return (
-    <div className={clsx(styles.editor)}>
-      <EditorMenu editor={editor} />
-      <EditorPage editor={editor} />
-    </div>
+    <>
+      {token ?
+        <div className={clsx(styles.editor)}>
+          <EditorMenu editor={editor} logOut={logOut} />
+          <EditorPage editor={editor} />
+        </div>
+      :
+        <button onClick={getCode}>Log in</button>
+      }
+    </>
   )
 }

@@ -17,7 +17,7 @@ const Group = ({className, children}) => {
 }
 
 
-export default function EditorMenu({ editor, className }) {
+export default function EditorMenu({ editor, logOut, className }) {
   const changeFontStyle = (event) => {
     event.preventDefault()
 
@@ -110,6 +110,11 @@ export default function EditorMenu({ editor, className }) {
       <Group>
         <EditorIcon editor={editor} action={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>
           format_clear
+        </EditorIcon>
+      </Group>
+      <Group>
+        <EditorIcon editor={editor} action={logOut}>
+          logout
         </EditorIcon>
       </Group>
     </div>
