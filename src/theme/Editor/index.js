@@ -5,6 +5,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl'
 
 import { useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { Octokit } from '@octokit/core'
+import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
 import unified from 'unified'
 import markdown from 'remark-parse'
@@ -34,7 +36,7 @@ export default function Editor({ options }) {
     }
   } = options
 
-  const [token, setToken] = useState()
+  const [github, setGithub] = useState()
 
   const editBaseUrl = useBaseUrl('/edit')
 
@@ -44,11 +46,19 @@ export default function Editor({ options }) {
     ],
     autofocus: 'start',
     onBeforeCreate: async ({ editor }) => {
-      if (token) {
+      if (github) {
         const filePath = window.location.pathname.slice(editBaseUrl.length)
+        const contentPath = docsPath + filePath
 
         if (filePath) {
-          fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${docsPath}${filePath}.md`)
+          const { sha, download_url } = github.repos.getContent({
+            organizationName,
+            projectName,
+            contentPath,
+          })
+
+          console.log(sha)
+          fetch(download_url)
             .then(response => response.text())
             .then((text) => {
               unified()
@@ -89,7 +99,9 @@ export default function Editor({ options }) {
   useEffect(() => {
     const token = sessionStorage.getItem('token')
     if (token) {
-      setToken(token)
+      const OctokitRest = Octokit.plugin(restEndpointMethods);
+      const octokitRest = new OctokitRest({ auth: token });
+      setGithub(octokitRest.rest)
     } else {
       const parameters = new URLSearchParams(window.location.search)
       if (parameters.has('code')) {
@@ -102,7 +114,7 @@ export default function Editor({ options }) {
 
   return (
     <>
-      {token ?
+      {github ?
         <div className={clsx(styles.editor)}>
           <EditorMenu editor={editor} />
           <EditorPage editor={editor} />
