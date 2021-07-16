@@ -111,7 +111,7 @@ module.exports = {
     [
       './..',
       {
-        docsPath: '/example/docs',
+        docsPath: 'example/docs',
         github: {
           clientId: '325481063e5c1fc9dd57',
           tokenUri: 'https://enigmatic-plateau-45861.herokuapp.com/authenticate/'

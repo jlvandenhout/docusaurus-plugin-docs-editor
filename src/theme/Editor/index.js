@@ -45,35 +45,6 @@ export default function Editor({ options }) {
       StarterKit,
     ],
     autofocus: 'start',
-    onBeforeCreate: async ({ editor }) => {
-      if (github) {
-        const filePath = window.location.pathname.slice(editBaseUrl.length)
-        const contentPath = docsPath + filePath
-
-        if (filePath) {
-          const { sha, download_url } = github.repos.getContent({
-            organizationName,
-            projectName,
-            contentPath,
-          })
-
-          console.log(sha)
-          fetch(download_url)
-            .then(response => response.text())
-            .then((text) => {
-              unified()
-                .use(markdown)
-                .use(frontmatter, ['yaml'])
-                .use(remark2rehype)
-                .use(stringify)
-                .process(text, function (err, file) {
-                  if (err) throw err
-                  editor.chain().setContent(String(file)).focus('start').run()
-                })
-            })
-        }
-      }
-    }
   })
 
   const getCode = () => {
@@ -95,6 +66,44 @@ export default function Editor({ options }) {
       .then(data => sessionStorage.setItem('token', data.token))
       .then(() => window.location.replace(redirectUri))
   }
+
+  useEffect(() => {
+    if (github) {
+      const filePath = window.location.pathname.slice(editBaseUrl.length)
+      const contentPath = docsPath + filePath + '.md'
+      console.log(contentPath)
+
+      if (filePath) {
+        github.repos.getContent({
+          owner: organizationName,
+          repo: projectName,
+          path: contentPath,
+        })
+        .then(data => {
+          const {
+            data: {
+              sha,
+              download_url
+            }
+          } = data
+
+          fetch(download_url)
+            .then(response => response.text())
+            .then((text) => {
+              unified()
+                .use(markdown)
+                .use(frontmatter, ['yaml'])
+                .use(remark2rehype)
+                .use(stringify)
+                .process(text, function (err, file) {
+                  if (err) throw err
+                  editor.chain().setContent(String(file)).focus('start').run()
+                })
+            })
+        })
+      }
+    }
+  }, [github])
 
   useEffect(() => {
     const token = sessionStorage.getItem('token')
