@@ -1,52 +1,42 @@
 import React, { useEffect, useState } from 'react'
-import { useEditor } from '@tiptap/react'
 import clsx from 'clsx'
-import StarterKit from '@tiptap/starter-kit'
-import EditorMenu from '@theme/EditorMenu'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useBaseUrl from '@docusaurus/useBaseUrl'
+
+import { useEditor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+
 import unified from 'unified'
 import markdown from 'remark-parse'
 import frontmatter from 'remark-frontmatter'
 import remark2rehype from 'remark-rehype'
 import stringify from 'rehype-stringify'
+
+import EditorMenu from '@theme/EditorMenu'
 import EditorPage from '@theme/EditorPage'
+import EditorLogin from '@theme/EditorLogin'
+
 import styles from './styles.module.css'
 
-export default function Editor({options}) {
+export default function Editor({ options }) {
   const {
     siteConfig: {
       organizationName,
       projectName,
     }
   } = useDocusaurusContext()
-  const [token, setToken] = useState(null)
-  const baseUrl = useBaseUrl('/edit')
 
-  const getCode = () => {
-    const url = new URL('https://github.com/login/oauth/authorize')
-    const parameters = url.searchParams
-    parameters.append('client_id', options.github.clientId)
-    parameters.append('redirect_uri', window.location.href)
-    window.location.replace(url.href)
-  }
-
-  const getToken = (code) => {
-    localStorage.setItem('token', `[TOKEN_FROM_CODE: ${code}]`)
-
-    window.location.replace(window.location.origin + window.location.pathname)
-  }
-
-  const updateToken = (event) => {
-    if (!event.key || event.key === 'token') {
-      setToken(event.newValue)
+  const {
+    docsPath,
+    github: {
+      clientId,
+      tokenUri,
     }
-  }
+  } = options
 
-  const logOut = () => {
-    setToken(null)
-    localStorage.removeItem('token')
-  }
+  const [token, setToken] = useState()
+
+  const editBaseUrl = useBaseUrl('/edit')
 
   const editor = useEditor({
     extensions: [
@@ -54,33 +44,51 @@ export default function Editor({options}) {
     ],
     autofocus: 'start',
     onBeforeCreate: async ({ editor }) => {
-      const url = new URL(window.location.href)
-      const path = url.pathname.slice(baseUrl.length)
+      if (token) {
+        const filePath = window.location.pathname.slice(editBaseUrl.length)
 
-      if (path) {
-        let response = await fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${options.path}${path}.md`)
-        if (response.ok) {
-          let text = await response.text()
-
-          unified()
-            .use(markdown)
-            .use(frontmatter, ['yaml'])
-            .use(remark2rehype)
-            .use(stringify)
-            .process(text, function (err, file) {
-              if (err) throw err
-              editor.chain().setContent(String(file)).focus('start').run()
+        if (filePath) {
+          fetch(`https://raw.githubusercontent.com/${organizationName}/${projectName}/master${docsPath}${filePath}.md`)
+            .then(response => response.text())
+            .then((text) => {
+              unified()
+                .use(markdown)
+                .use(frontmatter, ['yaml'])
+                .use(remark2rehype)
+                .use(stringify)
+                .process(text, function (err, file) {
+                  if (err) throw err
+                  editor.chain().setContent(String(file)).focus('start').run()
+                })
             })
         }
       }
-    },
+    }
   })
 
-  useEffect(() => {
-    window.addEventListener('storage', updateToken)
+  const getCode = () => {
+    const codeUri = new URL('https://github.com/login/oauth/authorize')
+    const redirectUri = window.location.origin + window.location.pathname
 
-    const token = localStorage.getItem('token')
-    if (localStorage.getItem('token')) {
+    const parameters = codeUri.searchParams
+    parameters.append('client_id', clientId)
+    parameters.append('redirect_uri', redirectUri)
+
+    window.location.replace(codeUri.href)
+  }
+
+  const getToken = (code) => {
+    const redirectUri = window.location.origin + window.location.pathname
+
+    fetch(tokenUri + code)
+      .then(response => response.json())
+      .then(data => sessionStorage.setItem('token', data.token))
+      .then(() => window.location.replace(redirectUri))
+  }
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('token')
+    if (token) {
       setToken(token)
     } else {
       const parameters = new URLSearchParams(window.location.search)
@@ -96,11 +104,11 @@ export default function Editor({options}) {
     <>
       {token ?
         <div className={clsx(styles.editor)}>
-          <EditorMenu editor={editor} logOut={logOut} />
+          <EditorMenu editor={editor} />
           <EditorPage editor={editor} />
         </div>
       :
-        <button onClick={getCode}>Log in</button>
+        <EditorLogin />
       }
     </>
   )

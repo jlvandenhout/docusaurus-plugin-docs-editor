@@ -112,11 +112,6 @@ export default function EditorMenu({ editor, logOut, className }) {
           format_clear
         </EditorIcon>
       </Group>
-      <Group>
-        <EditorIcon editor={editor} action={logOut}>
-          logout
-        </EditorIcon>
-      </Group>
     </div>
   )
 }
