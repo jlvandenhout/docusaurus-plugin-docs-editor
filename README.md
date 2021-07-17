@@ -1,6 +1,8 @@
 # Docs Editor
 A Markdown editor for Docusaurus content.
 
+**WORK IN PROGRESS: This project is in early development so expect functionality to be broken!**
+
 ## Usage
 Add this plugin to your project:
 
