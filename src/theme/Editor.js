@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
+
 import clsx from 'clsx'
+import Head from '@docusaurus/Head'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useBaseUrl from '@docusaurus/useBaseUrl'
 
@@ -18,9 +20,7 @@ import EditorMenu from '@theme/EditorMenu'
 import EditorPage from '@theme/EditorPage'
 import EditorLogin from '@theme/EditorLogin'
 
-import styles from './styles.module.css'
-
-export default function Editor({ options }) {
+export default function Editor({ options, className }) {
   const {
     siteConfig: {
       organizationName,
@@ -123,8 +123,11 @@ export default function Editor({ options }) {
 
   return (
     <>
+      <Head>
+        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'></link>
+      </Head>
       {github ?
-        <div className={clsx(styles.editor)}>
+        <div className={clsx('editor', className)}>
           <EditorMenu editor={editor} />
           <EditorPage editor={editor} />
         </div>
