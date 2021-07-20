@@ -72,7 +72,6 @@ export default function Editor({ options, className }) {
     if (github) {
       const filePath = window.location.pathname.slice(editBaseUrl.length)
       const contentPath = docsPath + filePath + '.md'
-      console.log(contentPath)
 
       if (filePath) {
         github.repos.getContent({
