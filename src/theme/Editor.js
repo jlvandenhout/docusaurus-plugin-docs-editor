@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
 import clsx from 'clsx'
-import Head from '@docusaurus/Head'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useBaseUrl from '@docusaurus/useBaseUrl'
 
@@ -19,6 +18,8 @@ import stringify from 'rehype-stringify'
 import EditorMenu from '@theme/EditorMenu'
 import EditorPage from '@theme/EditorPage'
 import EditorLogin from '@theme/EditorLogin'
+
+import './Editor.css'
 
 export default function Editor({ options, className }) {
   const {
@@ -123,9 +124,6 @@ export default function Editor({ options, className }) {
 
   return (
     <>
-      <Head>
-        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'></link>
-      </Head>
       {github ?
         <div className={clsx('editor', className)}>
           <EditorMenu editor={editor} />

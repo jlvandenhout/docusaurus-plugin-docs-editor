@@ -1,5 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
+import Head from '@docusaurus/Head'
 
 
 const headingLevels = [1, 2, 3, 4, 5, 6]
@@ -66,66 +67,71 @@ export default function EditorMenu({ editor, className }) {
   }
 
   return (
-    <div className={clsx('editor__menu', className)}>
-      <EditorGroup>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().undo().run()}>
-          undo
-        </EditorIcon>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().redo().run()}>
-          redo
-        </EditorIcon>
-      </EditorGroup>
-      <EditorGroup>
-        <select
-          className={clsx('editor__select', 'margin-horiz--xs')}
-          value={checkFontStyle()}
-          onChange={changeFontStyle}
-        >
-          <option hidden disabled value=''></option>
-          <option value='paragraph'>Normal text</option>
-          {headingLevels.map((level) => {
-            return <option key={level} value={level}>{`Heading ${level}`}</option>
-          })}
-        </select>
-      </EditorGroup>
-      <EditorGroup>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBold().run()} name='bold'>
-          format_bold
-        </EditorIcon>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().toggleItalic().run()} name='italic'>
-          format_italic
-        </EditorIcon>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().toggleCode().run()} name='code'>
-          code
-        </EditorIcon>
-      </EditorGroup>
-      <EditorGroup>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBulletList().run()} name='bulletList'>
-          format_list_bulleted
-        </EditorIcon>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().toggleOrderedList().run()} name='orderedList'>
-          format_list_numbered
-        </EditorIcon>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().toggleCodeBlock().run()} name='codeBlock'>
-          code
-        </EditorIcon>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBlockquote().run()} name='blockquote'>
-          format_quote
-        </EditorIcon>
-      </EditorGroup>
-      <EditorGroup>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().setHorizontalRule().run()}>
-          horizontal_rule
-        </EditorIcon>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().setHardBreak().run()}>
-          keyboard_return
-        </EditorIcon>
-      </EditorGroup>
-      <EditorGroup>
-        <EditorIcon editor={editor} action={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>
-          format_clear
-        </EditorIcon>
-      </EditorGroup>
-    </div>
+    <>
+      <Head>
+        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'></link>
+      </Head>
+      <div className={clsx('editor__menu', 'padding-vert--sm', className)}>
+        <EditorGroup>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().undo().run()}>
+            undo
+          </EditorIcon>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().redo().run()}>
+            redo
+          </EditorIcon>
+        </EditorGroup>
+        <EditorGroup>
+          <select
+            className={clsx('editor__select', 'margin-horiz--xs')}
+            value={checkFontStyle()}
+            onChange={changeFontStyle}
+          >
+            <option hidden disabled value=''></option>
+            <option value='paragraph'>Normal text</option>
+            {headingLevels.map((level) => {
+              return <option key={level} value={level}>{`Heading ${level}`}</option>
+            })}
+          </select>
+        </EditorGroup>
+        <EditorGroup>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBold().run()} name='bold'>
+            format_bold
+          </EditorIcon>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().toggleItalic().run()} name='italic'>
+            format_italic
+          </EditorIcon>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().toggleCode().run()} name='code'>
+            code
+          </EditorIcon>
+        </EditorGroup>
+        <EditorGroup>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBulletList().run()} name='bulletList'>
+            format_list_bulleted
+          </EditorIcon>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().toggleOrderedList().run()} name='orderedList'>
+            format_list_numbered
+          </EditorIcon>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().toggleCodeBlock().run()} name='codeBlock'>
+            code
+          </EditorIcon>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBlockquote().run()} name='blockquote'>
+            format_quote
+          </EditorIcon>
+        </EditorGroup>
+        <EditorGroup>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().setHorizontalRule().run()}>
+            horizontal_rule
+          </EditorIcon>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().setHardBreak().run()}>
+            keyboard_return
+          </EditorIcon>
+        </EditorGroup>
+        <EditorGroup>
+          <EditorIcon editor={editor} action={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>
+            format_clear
+          </EditorIcon>
+        </EditorGroup>
+      </div>
+    </>
   )
 }
