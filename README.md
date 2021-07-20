@@ -10,7 +10,7 @@ Add this plugin to your project:
 yarn add jlvandenhout/docusaurus-plugin-docs-editor
 ```
 
-Then add enable the plugin in your Docusaurus configuration:
+Then enable the plugin in your Docusaurus configuration:
 
 ```
 module.exports = {
@@ -19,8 +19,25 @@ module.exports = {
     [
       '@jlvandenhout/docusaurus-plugin-docs-editor',
       {
-        path: 'docs' // The path to your docs folder in your project
+        // The path to the docs section in your repository
+        docsPath: 'example/docs',
+
+        // GitHub OAuth Application settings
+        github: {
+          clientId: '[GITHUB_CLIENT_ID]',
+          tokenUri: '[GITHUB_TOKEN_URI]'
+        }
       }
+    ]
   ]
 };
+```
+
+## Example
+To run the example webpage, navigate to the example directory, set the needed environment
+variables or edit the plugin configuration and start the development server:
+
+```
+cd example
+GITHUB_CLIENT_ID=123456789 GITHUB_TOKEN_URI=https://example.com yarn start
 ```
