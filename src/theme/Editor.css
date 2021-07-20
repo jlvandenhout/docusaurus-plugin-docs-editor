@@ -62,6 +62,7 @@
 
 .editor__page {
   background-color: var(--ifm-color-gray-100);
+  flex-grow: 1;
   overflow-y: auto;
 }
 
