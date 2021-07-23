@@ -319,6 +319,10 @@ export default function Editor({ options, className }) {
     updateContent(content)
   }
 
+  const commit = () => {
+
+  }
+
   useEffect(() => {
     if (github) {
       const filePath = window.location.pathname.slice(editBaseUrl.length)
@@ -350,7 +354,7 @@ export default function Editor({ options, className }) {
     <>
       {github ?
         <div className={clsx('editor', className)}>
-          <EditorMenu editor={editor} />
+          <EditorMenu editor={editor} commit={commit} />
           <EditorPage editor={editor} />
         </div>
       :

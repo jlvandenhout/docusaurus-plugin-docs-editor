@@ -31,7 +31,7 @@ const EditorIcon = ({ editor, name, action, children }) => {
 }
 
 
-export default function EditorMenu({ editor, className }) {
+export default function EditorMenu({ editor, commit, className }) {
   const changeFontStyle = (event) => {
     event.preventDefault()
 
@@ -129,6 +129,11 @@ export default function EditorMenu({ editor, className }) {
         <EditorGroup>
           <EditorIcon editor={editor} action={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>
             format_clear
+          </EditorIcon>
+        </EditorGroup>
+        <EditorGroup>
+          <EditorIcon editor={editor} action={commit}>
+            save
           </EditorIcon>
         </EditorGroup>
       </div>
