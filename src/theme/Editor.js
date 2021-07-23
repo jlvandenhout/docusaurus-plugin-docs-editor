@@ -10,6 +10,9 @@ import { Octokit } from '@octokit/core'
 import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
 import htmlStringify from 'rehype-stringify'
+import htmlParse from 'rehype-parse'
+import htmlToMarkdown from 'rehype-remark'
+import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
 import markdownParseFrontmatter from 'remark-frontmatter'
 import markdownExtractFrontmatter from 'remark-extract-frontmatter'
@@ -79,8 +82,8 @@ export default function Editor({ options, className }) {
       .use(markdownExtractFrontmatter, { yaml: yaml.parse })
       .use(markdownToHtml)
       .use(htmlStringify)
-      .process(content, function (err, file) {
-        if (err) throw err
+      .process(content)
+      .then((file) => {
         setFrontmatter(file.data)
         editor.chain().setContent(String(file)).focus('start').run()
       })
