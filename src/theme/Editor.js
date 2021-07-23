@@ -329,7 +329,14 @@ export default function Editor({ options, className }) {
       .use(markdownStringify)
       .process(editor.getHTML())
       .then((file) => {
-        console.log(file)
+        let content = ''
+
+        if (frontmatter) {
+          content += '---\n' + yaml.stringify(frontmatter) + '---\n\n'
+        }
+
+        content += file.contents
+        console.log(content)
       })
   }
 
