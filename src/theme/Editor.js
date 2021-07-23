@@ -55,6 +55,7 @@ export default function Editor({ options, className }) {
     const parameters = codeUri.searchParams
     parameters.append('client_id', clientId)
     parameters.append('redirect_uri', redirectUri)
+    parameters.append('scope', 'public_repo')
 
     window.location.replace(codeUri.href)
   }
@@ -177,6 +178,78 @@ export default function Editor({ options, className }) {
         throw `Repository is not a fork of ${organizationName}/${projectName}`
       }
     }
+
+    return repository
+  }
+
+  const updateFork = async (repository) => {
+    // Create and merge pull request from upstream latest commit to default branch
+  }
+
+  const createBranch = async (repository, branchName) => {
+    const {
+      data: {
+        default_branch,
+        name,
+        owner: {
+          login
+        }
+      }
+    } = repository
+
+    const {
+      data: {
+        object: {
+          sha
+        }
+      }
+    } = await github.git.getRef({
+      owner: login,
+      repo: name,
+      ref: 'heads/' + default_branch,
+    })
+
+    console.log(sha)
+    const branch = await github.git.createRef({
+      owner: login,
+      repo: name,
+      ref: 'refs/heads/' + branchName,
+      sha,
+    });
+
+    return branch
+  }
+
+  const getOrCreateBranch = async (repository, branchName) => {
+    let branch
+
+    const {
+      data: {
+        name,
+        owner: {
+          login
+        }
+      }
+    } = repository
+    const ref = 'heads/' + branchName
+
+    try {
+      branch = await github.git.getRef({
+        owner: login,
+        repo: name,
+        ref
+      })
+    } catch (error) {
+      if (error.status === 404) {
+        if (login !== organizationName) await updateFork(repository)
+
+        branch = await createBranch(repository, branchName)
+      } else {
+        throw error
+      }
+    }
+
+    return branch
   }
 
   useEffect(() => {
@@ -195,8 +268,10 @@ export default function Editor({ options, className }) {
       const filePath = window.location.pathname.slice(editBaseUrl.length)
       if (filePath) {
         const contentPath = docsPath + filePath + '.md'
-        // getContent(contentPath)
+        const branchName = 'edit/' + contentPath.replaceAll(/[\/\.]/g, '-')
+
         getOrForkRepository()
+          .then(repository => getOrCreateBranch(repository, branchName))
       }
     }
   }, [github])
