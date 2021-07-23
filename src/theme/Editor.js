@@ -302,8 +302,8 @@ export default function Editor({ options, className }) {
 
     const {
       data: {
-        sha: contentSha,
-        download_url
+        content,
+        sha: contentSha
       }
     } = await github.repos.getContent({
       owner: login,
@@ -312,12 +312,9 @@ export default function Editor({ options, className }) {
       ref: sha
     })
 
-    const response = await fetch(download_url)
-    const content = await response.text()
-
     setContentSha(contentSha)
 
-    return content
+    return atob(content)
   }
 
   const openFile = async (filePath) => {
