@@ -33,7 +33,7 @@ export default function Editor({ options, className }) {
     docsPath,
     github: {
       clientId,
-      tokenUri,
+      tokenUri
     }
   } = options
 
@@ -68,39 +68,136 @@ export default function Editor({ options, className }) {
       .then(() => window.location.replace(redirectUri))
   }
 
-  useEffect(() => {
-    if (github) {
-      const filePath = window.location.pathname.slice(editBaseUrl.length)
-      const contentPath = docsPath + filePath + '.md'
+  const getContent = async (contentPath) => {
+    const {
+      data: {
+        login
+      }
+    } = await github.users.getAuthenticated()
 
-      if (filePath) {
-        github.repos.getContent({
-          owner: organizationName,
-          repo: projectName,
-          path: contentPath,
-        })
-        .then(data => {
+    const {
+      data: {
+        download_url
+      }
+    } = await github.repos.getContent({
+      owner: login,
+      repo: projectName,
+      path: contentPath
+    })
+
+    const response = await fetch(download_url)
+    const text = await response.text()
+
+    unified()
+      .use(markdown)
+      .use(frontmatter, ['yaml'])
+      .use(remark2rehype)
+      .use(stringify)
+      .process(text, function (err, file) {
+        if (err) throw err
+        editor.chain().setContent(String(file)).focus('start').run()
+      })
+  }
+
+  const forkRepository = (options) => {
+    return new Promise((resolve, reject) => {
+      github.repos.createFork(options)
+        .then(fork => {
           const {
             data: {
-              sha,
-              download_url
+              owner: {
+                login
+              }
             }
-          } = data
+          } = fork
 
-          fetch(download_url)
-            .then(response => response.text())
-            .then((text) => {
-              unified()
-                .use(markdown)
-                .use(frontmatter, ['yaml'])
-                .use(remark2rehype)
-                .use(stringify)
-                .process(text, function (err, file) {
-                  if (err) throw err
-                  editor.chain().setContent(String(file)).focus('start').run()
-                })
-            })
+          const interval = setInterval(() => {
+            try {
+              github.repos.get({
+                owner: login,
+                repo
+              })
+            } catch (error) {
+              if (error.status !== 404) reject(error)
+            }
+
+            clearInterval(interval)
+            resolve(fork)
+          }, 2000)
         })
+        .catch(error => reject(error))
+    })
+  }
+
+  const getOrCreateRepository = async () => {
+    let repository
+
+    const {
+      data: {
+        login
+      }
+    } = await github.users.getAuthenticated()
+
+    try {
+      repository = await github.repos.get({
+        owner: login,
+        repo: projectName,
+      });
+    } catch (error) {
+      if (error.status === 404) {
+        repository = await forkRepository({
+          login,
+          owner: organizationName,
+          repo: projectName
+        })
+      } else {
+        throw error
+      }
+    }
+
+    // Sanity check as the user might have a
+    // similarly named repository that is not a fork
+    if ((login !== organizationName)) {
+      const {
+        data: {
+          parent
+        }
+      } = repository
+
+      if (parent) {
+        const {
+          name: parentName,
+          owner: {
+            login: parentLogin
+          }
+        } = parent
+        if ((parentLogin !== organizationName) && (parentName !== projectName)) {
+          throw `Repository is not a fork of ${organizationName}/${projectName}`
+        }
+      } else {
+        throw `Repository is not a fork of ${organizationName}/${projectName}`
+      }
+    }
+  }
+
+  useEffect(() => {
+    /*
+      1. Check if repo exists for user
+        No: create and wait for fork
+      2. Check if branch exists for this file
+        No:
+          1. create and merge PR from upstream
+          2. check if file exists
+            Yes: create branch
+            No: fail
+      3. Fetch file contents from branch
+    */
+    if (github) {
+      const filePath = window.location.pathname.slice(editBaseUrl.length)
+      if (filePath) {
+        const contentPath = docsPath + filePath + '.md'
+        // getContent(contentPath)
+        getOrCreateRepository()
       }
     }
   }, [github])
