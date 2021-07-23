@@ -25,7 +25,9 @@
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "url-loader": "^4.1.1"
+    "remark-extract-frontmatter": "^3.1.0",
+    "url-loader": "^4.1.1",
+    "yaml": "^1.10.2"
   },
   "browserslist": {
     "production": [

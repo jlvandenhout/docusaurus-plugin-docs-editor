@@ -11,7 +11,9 @@ import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
 import unified from 'unified'
 import markdown from 'remark-parse'
-import frontmatter from 'remark-frontmatter'
+import parseFrontmatter from 'remark-frontmatter'
+import extractFrontmatter from 'remark-extract-frontmatter'
+import yaml from 'yaml'
 import remark2rehype from 'remark-rehype'
 import stringify from 'rehype-stringify'
 
@@ -22,6 +24,7 @@ import EditorLogin from '@theme/EditorLogin'
 import './Editor.css'
 
 export default function Editor({ options, className }) {
+  const [frontmatter, setFrontmatter] = useState()
   const {
     siteConfig: {
       organizationName,
@@ -72,11 +75,13 @@ export default function Editor({ options, className }) {
   const updateContent = (content) => {
     unified()
       .use(markdown)
-      .use(frontmatter, ['yaml'])
+      .use(parseFrontmatter, ['yaml'])
+      .use(extractFrontmatter, { yaml: yaml.parse })
       .use(remark2rehype)
       .use(stringify)
       .process(content, function (err, file) {
         if (err) throw err
+        setFrontmatter(file.data)
         editor.chain().setContent(String(file)).focus('start').run()
       })
   }
