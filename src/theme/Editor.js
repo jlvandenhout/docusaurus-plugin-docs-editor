@@ -129,7 +129,7 @@ export default function Editor({ options, className }) {
     })
   }
 
-  const getOrCreateRepository = async () => {
+  const getOrForkRepository = async () => {
     let repository
 
     const {
@@ -146,7 +146,6 @@ export default function Editor({ options, className }) {
     } catch (error) {
       if (error.status === 404) {
         repository = await forkRepository({
-          login,
           owner: organizationName,
           repo: projectName
         })
@@ -197,7 +196,7 @@ export default function Editor({ options, className }) {
       if (filePath) {
         const contentPath = docsPath + filePath + '.md'
         // getContent(contentPath)
-        getOrCreateRepository()
+        getOrForkRepository()
       }
     }
   }, [github])
