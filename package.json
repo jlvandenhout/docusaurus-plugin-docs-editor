@@ -8,13 +8,18 @@
   "license": "MIT",
   "dependencies": {
     "@octokit/core": "^3.5.1",
-    "@octokit/plugin-rest-endpoint-methods": "^5.4.1",
+    "@octokit/plugin-rest-endpoint-methods": "^5.5.1",
     "@tiptap/react": "^2.0.0-beta.52",
     "@tiptap/starter-kit": "^2.0.0-beta.82",
+    "rehype-parse": "^7.0.1",
+    "rehype-remark": "^8.1.1",
     "rehype-stringify": "^8.0.0",
+    "remark-extract-frontmatter": "^3.1.0",
     "remark-frontmatter": "^3.0.0",
     "remark-parse": "^9.0.0",
     "remark-rehype": "^8.1.0",
-    "unified": "^9.2.1"
+    "remark-stringify": "^9.0.1",
+    "unified": "^9.2.1",
+    "yaml": "^1.10.2"
   }
 }

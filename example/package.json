@@ -17,20 +17,13 @@
     "@docusaurus/core": "2.0.0-beta.3",
     "@docusaurus/preset-classic": "2.0.0-beta.3",
     "@mdx-js/react": "^1.6.21",
-    "@octokit/core": "^3.5.1",
-    "@octokit/plugin-rest-endpoint-methods": "^5.4.1",
     "@svgr/webpack": "^5.5.0",
     "clsx": "^1.1.1",
     "file-loader": "^6.2.0",
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "rehype-parse": "^7.0.1",
-    "rehype-remark": "^8.1.1",
-    "remark-extract-frontmatter": "^3.1.0",
-    "remark-stringify": "^9.0.1",
-    "url-loader": "^4.1.1",
-    "yaml": "^1.10.2"
+    "url-loader": "^4.1.1"
   },
   "browserslist": {
     "production": [
