@@ -346,15 +346,15 @@ export default function Editor({ options, className }) {
 
         content += file.contents
 
-        // await github.repos.createOrUpdateFileContents({
-        //   owner: repository.owner.login,
-        //   repo: repository.name,
-        //   path: contentPath,
-        //   sha: contentSha,
-        //   message: 'Update',
-        //   content: btoa(,
-        //   branch: branchName,
-        // })
+        github.repos.createOrUpdateFileContents({
+          owner: repository.owner.login,
+          repo: repository.name,
+          path: contentPath,
+          sha: contentSha,
+          message: `Edit ${contentPath}`,
+          content: btoa(content),
+          branch: branchName,
+        })
       })
   }
 
