@@ -320,7 +320,14 @@ export default function Editor({ options, className }) {
   }
 
   const commit = () => {
-
+    unified()
+      .use(htmlParse)
+      .use(htmlToMarkdown)
+      .use(markdownStringify)
+      .process(editor.getHTML())
+      .then((file) => {
+        console.log(file)
+      })
   }
 
   useEffect(() => {
