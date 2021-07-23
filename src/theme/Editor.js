@@ -9,13 +9,13 @@ import StarterKit from '@tiptap/starter-kit'
 import { Octokit } from '@octokit/core'
 import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
+import htmlStringify from 'rehype-stringify'
+import markdownParse from 'remark-parse'
+import markdownParseFrontmatter from 'remark-frontmatter'
+import markdownExtractFrontmatter from 'remark-extract-frontmatter'
+import markdownToHtml from 'remark-rehype'
 import unified from 'unified'
-import markdown from 'remark-parse'
-import parseFrontmatter from 'remark-frontmatter'
-import extractFrontmatter from 'remark-extract-frontmatter'
 import yaml from 'yaml'
-import remark2rehype from 'remark-rehype'
-import stringify from 'rehype-stringify'
 
 import EditorMenu from '@theme/EditorMenu'
 import EditorPage from '@theme/EditorPage'
@@ -74,11 +74,11 @@ export default function Editor({ options, className }) {
 
   const updateContent = (content) => {
     unified()
-      .use(markdown)
-      .use(parseFrontmatter, ['yaml'])
-      .use(extractFrontmatter, { yaml: yaml.parse })
-      .use(remark2rehype)
-      .use(stringify)
+      .use(markdownParse)
+      .use(markdownParseFrontmatter, ['yaml'])
+      .use(markdownExtractFrontmatter, { yaml: yaml.parse })
+      .use(markdownToHtml)
+      .use(htmlStringify)
       .process(content, function (err, file) {
         if (err) throw err
         setFrontmatter(file.data)
