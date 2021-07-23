@@ -28,6 +28,11 @@ import './Editor.css'
 
 export default function Editor({ options, className }) {
   const [frontmatter, setFrontmatter] = useState()
+  const [contentPath, setContentPath] = useState()
+  const [branchName, setBranchName] = useState()
+  const [repository, setRepository] = useState()
+  const [contentSha, setContentSha] = useState()
+
   const {
     siteConfig: {
       organizationName,
@@ -297,6 +302,7 @@ export default function Editor({ options, className }) {
 
     const {
       data: {
+        sha: contentSha,
         download_url
       }
     } = await github.repos.getContent({
@@ -309,6 +315,8 @@ export default function Editor({ options, className }) {
     const response = await fetch(download_url)
     const content = await response.text()
 
+    setContentSha(contentSha)
+
     return content
   }
 
@@ -320,6 +328,10 @@ export default function Editor({ options, className }) {
     const branch = await getOrCreateBranch(repository, branchName)
     const content = await getContent(repository, branch, contentPath)
     updateContent(content)
+
+    setRepository(repository.data)
+    setBranchName(branchName)
+    setContentPath(contentPath)
   }
 
   const save = () => {
@@ -336,7 +348,16 @@ export default function Editor({ options, className }) {
         }
 
         content += file.contents
-        console.log(content)
+
+        // await github.repos.createOrUpdateFileContents({
+        //   owner: repository.owner.login,
+        //   repo: repository.name,
+        //   path: contentPath,
+        //   sha: contentSha,
+        //   message: 'Update',
+        //   content: btoa(,
+        //   branch: branchName,
+        // })
       })
   }
 
