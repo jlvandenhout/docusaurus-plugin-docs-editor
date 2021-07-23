@@ -69,32 +69,13 @@ export default function Editor({ options, className }) {
       .then(() => window.location.replace(redirectUri))
   }
 
-  const getContent = async (contentPath) => {
-    const {
-      data: {
-        login
-      }
-    } = await github.users.getAuthenticated()
-
-    const {
-      data: {
-        download_url
-      }
-    } = await github.repos.getContent({
-      owner: login,
-      repo: projectName,
-      path: contentPath
-    })
-
-    const response = await fetch(download_url)
-    const text = await response.text()
-
+  const updateContent = (content) => {
     unified()
       .use(markdown)
       .use(frontmatter, ['yaml'])
       .use(remark2rehype)
       .use(stringify)
-      .process(text, function (err, file) {
+      .process(content, function (err, file) {
         if (err) throw err
         editor.chain().setContent(String(file)).focus('start').run()
       })
@@ -288,26 +269,58 @@ export default function Editor({ options, className }) {
     return branch
   }
 
+  const getContent = async (repository, branch, contentPath) => {
+    const {
+      data: {
+        name,
+        owner: {
+          login
+        }
+      }
+    } = repository
+
+    const {
+      data: {
+        object: {
+          sha
+        }
+      }
+    } = branch
+
+    const {
+      data: {
+        download_url
+      }
+    } = await github.repos.getContent({
+      owner: login,
+      repo: name,
+      path: contentPath,
+      ref: sha
+    })
+
+    const response = await fetch(download_url)
+    const content = await response.text()
+
+    return content
+  }
+
+  const openFile = async (filePath) => {
+    const contentPath = docsPath + filePath + '.md'
+    const branchName = 'edit/' + contentPath.replaceAll(/[\/\.]/g, '-')
+
+    const repository = await getOrForkRepository()
+    const branch = await getOrCreateBranch(repository, branchName)
+    const content = await getContent(repository, branch, contentPath)
+    updateContent(content)
+  }
+
   useEffect(() => {
-    /*
-      1. Check if repo exists for user
-        No: create and wait for fork
-      2. Check if branch exists for this file
-        No:
-          1. create and merge PR from upstream
-          2. check if file exists
-            Yes: create branch
-            No: fail
-      3. Fetch file contents from branch
-    */
     if (github) {
       const filePath = window.location.pathname.slice(editBaseUrl.length)
       if (filePath) {
-        const contentPath = docsPath + filePath + '.md'
-        const branchName = 'edit/' + contentPath.replaceAll(/[\/\.]/g, '-')
-
-        getOrForkRepository()
-          .then(repository => getOrCreateBranch(repository, branchName))
+        openFile(filePath)
+      } else {
+        throw 'No file path'
       }
     }
   }, [github])
