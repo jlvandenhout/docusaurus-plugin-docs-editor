@@ -322,7 +322,7 @@ export default function Editor({ options, className }) {
     updateContent(content)
   }
 
-  const commit = () => {
+  const save = () => {
     unified()
       .use(htmlParse)
       .use(htmlToMarkdown)
@@ -371,7 +371,7 @@ export default function Editor({ options, className }) {
     <>
       {github ?
         <div className={clsx('editor', className)}>
-          <EditorMenu editor={editor} commit={commit} />
+          <EditorMenu editor={editor} save={save} />
           <EditorPage editor={editor} />
         </div>
       :
