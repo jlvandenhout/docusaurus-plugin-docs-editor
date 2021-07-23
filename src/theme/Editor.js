@@ -183,7 +183,43 @@ export default function Editor({ options, className }) {
   }
 
   const updateFork = async (repository) => {
-    // Create and merge pull request from upstream latest commit to default branch
+    const {
+      data: {
+        default_branch: upstreamDefaultBranch,
+      }
+    }  = await github.repos.get({
+      owner: organizationName,
+      repo: projectName,
+    });
+
+    const {
+      data: {
+        object: {
+          sha
+        }
+      }
+    } = await github.git.getRef({
+      owner: organizationName,
+      repo: projectName,
+      ref: 'heads/' + upstreamDefaultBranch,
+    })
+
+    const {
+      data: {
+        name,
+        default_branch,
+        owner: {
+          login
+        }
+      }
+    } = repository
+
+    await github.git.updateRef({
+      owner: login,
+      repo: name,
+      ref: 'heads/' + default_branch,
+      sha,
+    })
   }
 
   const createBranch = async (repository, branchName) => {
