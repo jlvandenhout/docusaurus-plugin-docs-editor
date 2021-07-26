@@ -31,7 +31,7 @@ const EditorIcon = ({ editor, name, action, children }) => {
 }
 
 
-export default function EditorMenu({ editor, save, className }) {
+export default function EditorMenu({ editor, save, submit, className }) {
   const changeFontStyle = (event) => {
     event.preventDefault()
 
@@ -132,9 +132,12 @@ export default function EditorMenu({ editor, save, className }) {
           </EditorIcon>
         </EditorGroup>
         <EditorGroup>
-          <EditorIcon editor={editor} action={save}>
-            save
-          </EditorIcon>
+          <button className='editor__button margin-horiz--xs padding-horiz--sm' onClick={save}>
+            <span className='material-icons'>file_download</span> Save
+          </button>
+          <button className='editor__button margin-horiz--xs padding-horiz--sm' onClick={submit}>
+            <span className='material-icons'>file_upload</span> Submit
+          </button>
         </EditorGroup>
       </div>
     </>

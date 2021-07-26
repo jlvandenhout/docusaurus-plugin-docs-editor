@@ -358,6 +358,11 @@ export default function Editor({ options, className }) {
       })
   }
 
+  const submit = () => {
+    // Commit changes
+    // Create PR if it does not exist
+  }
+
   useEffect(() => {
     if (github) {
       const filePath = window.location.pathname.slice(editBaseUrl.length)

@@ -51,6 +51,20 @@
   width: 2rem;
 }
 
+.editor__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+
+  color: var(--ifm-color-gray-100);
+  background-color: var(--ifm-color-gray-700);
+
+  border-radius: var(--ifm-global-radius);
+  height: 2rem;
+}
+
 .editor__icon:hover {
   background-color: var(--ifm-color-gray-800);
 }
