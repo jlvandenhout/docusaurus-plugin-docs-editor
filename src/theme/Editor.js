@@ -31,7 +31,6 @@ export default function Editor({ options, className }) {
   const [contentPath, setContentPath] = useState()
   const [branchName, setBranchName] = useState()
   const [repository, setRepository] = useState()
-  const [contentSha, setContentSha] = useState()
 
   const {
     siteConfig: {
@@ -80,18 +79,23 @@ export default function Editor({ options, className }) {
       .then(() => window.location.replace(redirectUri))
   }
 
-  const updateContent = (content) => {
-    unified()
+  const updateContent = async (content) => {
+    const {
+      data: {
+        content: contentData
+      }
+    } = content
+
+    const file = await unified()
       .use(markdownParse)
       .use(markdownParseFrontmatter, ['yaml'])
       .use(markdownExtractFrontmatter, { yaml: yaml.parse })
       .use(markdownToHtml)
       .use(htmlStringify)
-      .process(content)
-      .then((file) => {
-        setFrontmatter(file.data)
-        editor.chain().setContent(String(file)).focus('start').run()
-      })
+      .process(atob(contentData))
+
+    setFrontmatter(file.data)
+    editor.chain().setContent(file.contents).focus('start').run()
   }
 
   const forkRepository = (options) => {
@@ -100,6 +104,7 @@ export default function Editor({ options, className }) {
         .then(fork => {
           const {
             data: {
+              name,
               owner: {
                 login
               }
@@ -110,7 +115,7 @@ export default function Editor({ options, className }) {
             try {
               github.repos.get({
                 owner: login,
-                repo
+                repo: name
               })
             } catch (error) {
               if (error.status !== 404) reject(error)
@@ -239,7 +244,6 @@ export default function Editor({ options, className }) {
       ref: 'heads/' + default_branch,
     })
 
-    console.log(sha)
     const branch = await github.git.createRef({
       owner: login,
       repo: name,
@@ -300,21 +304,14 @@ export default function Editor({ options, className }) {
       }
     } = branch
 
-    const {
-      data: {
-        content,
-        sha: contentSha
-      }
-    } = await github.repos.getContent({
+    const content = await github.repos.getContent({
       owner: login,
       repo: name,
       path: contentPath,
       ref: sha
     })
 
-    setContentSha(contentSha)
-
-    return atob(content)
+    return content
   }
 
   const openFile = async (filePath) => {
@@ -326,41 +323,87 @@ export default function Editor({ options, className }) {
     const content = await getContent(repository, branch, contentPath)
     updateContent(content)
 
-    setRepository(repository.data)
+    setRepository(repository)
     setBranchName(branchName)
     setContentPath(contentPath)
   }
 
-  const save = () => {
-    unified()
+  const save = async () => {
+    const branch = await getOrCreateBranch(repository, branchName)
+    const content = await getContent(repository, branch, contentPath)
+
+    const {
+      data: {
+        name,
+        owner: {
+          login
+        }
+      }
+    } = repository
+
+    const {
+      data: {
+        sha: contentSha
+      }
+    } = content
+
+    const file = await unified()
       .use(htmlParse)
       .use(htmlToMarkdown)
       .use(markdownStringify)
       .process(editor.getHTML())
-      .then((file) => {
-        let content = ''
 
-        if (frontmatter) {
-          content += '---\n' + yaml.stringify(frontmatter) + '---\n\n'
+    let contentData = ''
+
+    if (frontmatter) {
+      contentData += '---\n' + yaml.stringify(frontmatter) + '---\n\n'
+    }
+
+    contentData += file.contents
+
+    const {
+      data: {
+        commit: {
+          sha
         }
-
-        content += file.contents
-
-        github.repos.createOrUpdateFileContents({
-          owner: repository.owner.login,
-          repo: repository.name,
-          path: contentPath,
-          sha: contentSha,
-          message: `Edit ${contentPath}`,
-          content: btoa(content),
-          branch: branchName,
-        })
-      })
+      }
+    } = await github.repos.createOrUpdateFileContents({
+      owner: login,
+      repo: name,
+      path: contentPath,
+      sha: contentSha,
+      message: `Edit ${contentPath}`,
+      content: btoa(contentData),
+      branch: branchName,
+    })
   }
 
-  const submit = () => {
-    // Commit changes
-    // Create PR if it does not exist
+  const getOrCreatePullRequest = async () => {
+    const {
+      data: {
+        owner: {
+          login
+        }
+      }
+    } = repository
+
+    const head = login + ':' + branchName
+
+    const pulls = await github.pulls.list({
+      owner: organizationName,
+      repo: projectName,
+      state: 'open',
+      head
+    })
+
+    if (!pulls.data) {
+      // No pull requests yet for this branch
+    }
+  }
+
+  const submit = async () => {
+    await save()
+    await getOrCreatePullRequest()
   }
 
   useEffect(() => {
@@ -394,7 +437,7 @@ export default function Editor({ options, className }) {
     <>
       {github ?
         <div className={clsx('editor', className)}>
-          <EditorMenu editor={editor} save={save} />
+          <EditorMenu editor={editor} save={save} submit={submit} />
           <EditorPage editor={editor} />
         </div>
       :
