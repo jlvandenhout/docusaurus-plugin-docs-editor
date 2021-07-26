@@ -397,7 +397,21 @@ export default function Editor({ options, className }) {
     })
 
     if (!pulls.data) {
-      // No pull requests yet for this branch
+      const {
+        data: {
+          default_branch,
+        }
+      } = await github.repos.get({
+        owner: organizationName,
+        repo: projectName,
+      })
+
+      github.pulls.create({
+        owner: organizationName,
+        repo: projectName,
+        base: default_branch,
+        head,
+      })
     }
   }
 
