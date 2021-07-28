@@ -1,1 +1,0 @@
-(self.webpackChunkexample=self.webpackChunkexample||[]).push([[755],{9453:function(e){"use strict";e.exports=JSON.parse('{"docsPath":"example/docs","github":{"clientId":"f46b54ebe4b6254c91bd","tokenUri":"https://pacific-hamlet-28498.herokuapp.com/authorize/"},"id":"default"}')}}]);
