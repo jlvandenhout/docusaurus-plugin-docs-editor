@@ -114,7 +114,7 @@ module.exports = {
         docsPath: 'example/docs',
         github: {
           clientId: 'f46b54ebe4b6254c91bd',
-          tokenUri: 'https://safe-shore-02020.herokuapp.com/authorize/'
+          tokenUri: 'https://pacific-hamlet-28498.herokuapp.com/authorize/'
         }
       }
     ]
