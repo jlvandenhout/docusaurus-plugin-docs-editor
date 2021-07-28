@@ -113,8 +113,8 @@ module.exports = {
       {
         docsPath: 'example/docs',
         github: {
-          clientId: process.env.GITHUB_CLIENT_ID,
-          tokenUri: process.env.GITHUB_TOKEN_URI
+          clientId: 'f46b54ebe4b6254c91bd',
+          tokenUri: 'https://safe-shore-02020.herokuapp.com/authorize/'
         }
       }
     ]

@@ -34,12 +34,11 @@ module.exports = {
 ```
 
 ## Example
-To run the example webpage, you will need to set up a [GitHub OAuth App](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to let users authenticate themselves and a server that manages your Client Secret and allows users to swap their authentication code for an access token (for an easy setup, have a look at [Gatekeeper](https://github.com/prose/gatekeeper)).
+To run the example webpage, you will need to set up a [GitHub OAuth App](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to let users authenticate themselves and a server that manages your Client Secret and allows users to swap their authentication code for an access token (for an easy setup, have a look at [Gatekeeper](https://github.com/prose/gatekeeper)). Make sure to edit the plugin settings accordingly in the the Docusaurus config of the example.
 
-Then navigate to the example directory, set the needed environment
-variables or edit the Docusaurus config file directly and start the development server:
+Then navigate to the example directory and start the development server:
 
 ```
 cd example
-GITHUB_CLIENT_ID=123456789 GITHUB_TOKEN_URI=https://example.com yarn start
+yarn start
 ```
