@@ -114,7 +114,7 @@ module.exports = {
         docsPath: 'example/docs',
         github: {
           clientId: 'f46b54ebe4b6254c91bd',
-          tokenUri: 'https://pacific-hamlet-28498.herokuapp.com/authorize/'
+          tokenUri: 'https://lit-springs-95362.herokuapp.com/authorize/'
         }
       }
     ]
