@@ -1,0 +1,1 @@
+(self.webpackChunkexample=self.webpackChunkexample||[]).push([[802],{4738:function(e){"use strict";e.exports=JSON.parse('{"permalink":"/docusaurus-plugin-docs-editor/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":3,"previousPage":null,"nextPage":null,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
