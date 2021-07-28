@@ -26,30 +26,33 @@ import EditorLogin from '@theme/EditorLogin'
 
 import './Editor.css'
 
-export default function Editor({ options, className }) {
-  const [frontmatter, setFrontmatter] = useState()
-  const [contentPath, setContentPath] = useState()
-  const [branchName, setBranchName] = useState()
-  const [repository, setRepository] = useState()
 
-  const {
-    siteConfig: {
-      organizationName,
-      projectName,
-    }
-  } = useDocusaurusContext()
+export default function Editor({ options, className }) {
+  const [contentFrontmatter, setContentFrontmatter] = useState()
+  const [contentPath, setContentPath] = useState()
+  const [contentBranch, setContentBranch] = useState()
+
+  const [github, setGithub] = useState()
+
+  const editorBasePath = useBaseUrl('/edit')
+
+  const authorizationCodeUrl = 'https://github.com/login/oauth/authorize'
+  const authorizationScope = 'public_repo'
 
   const {
     docsPath,
     github: {
-      clientId,
-      tokenUri
-    }
+      clientId: authorizationClientId,
+      tokenUri: authorizationTokenUrl,
+    },
   } = options
 
-  const [github, setGithub] = useState()
-
-  const editBaseUrl = useBaseUrl('/edit')
+  const {
+    siteConfig: {
+      organizationName: contentOwner,
+      projectName: contentRepo,
+    },
+  } = useDocusaurusContext()
 
   const editor = useEditor({
     extensions: [
@@ -58,308 +61,143 @@ export default function Editor({ options, className }) {
     autofocus: 'start',
   })
 
-  const getCode = () => {
-    const codeUri = new URL('https://github.com/login/oauth/authorize')
-    const redirectUri = window.location.origin + window.location.pathname
+  const requestAuthorizationCode = (redirectUrl) => {
+    const url = new URL(authorizationCodeUrl)
 
-    const parameters = codeUri.searchParams
-    parameters.append('client_id', clientId)
-    parameters.append('redirect_uri', redirectUri)
-    parameters.append('scope', 'public_repo')
+    const parameters = url.searchParams
+    parameters.append('client_id', authorizationClientId)
+    parameters.append('scope', authorizationScope)
+    parameters.append('redirect_uri', redirectUrl)
 
-    window.location.replace(codeUri.href)
+    window.location.replace(url)
   }
 
-  const getToken = (code) => {
-    const redirectUri = window.location.origin + window.location.pathname
+  const requestAuthorizationToken = async (code) => {
+    const url = new URL(code, authorizationTokenUrl)
 
-    fetch(tokenUri + code)
+    const token = await fetch(url)
       .then(response => response.json())
-      .then(data => sessionStorage.setItem('token', data.token))
-      .then(() => window.location.replace(redirectUri))
+      .then(data => data.token)
+
+    return token
   }
 
-  const updateContent = async (content) => {
-    const {
-      data: {
-        content: contentData
-      }
-    } = content
+  const requestAuthorization = async () => {
+    const url = new URL(window.location.pathname, window.location.origin)
+    const parameters = new URLSearchParams(window.location.search)
 
-    const file = await unified()
-      .use(markdownParse)
-      .use(markdownParseFrontmatter, ['yaml'])
-      .use(markdownExtractFrontmatter, { yaml: yaml.parse })
-      .use(markdownToHtml)
-      .use(htmlStringify)
-      .process(atob(contentData))
+    const code = parameters.get('code')
 
-    setFrontmatter(file.data)
-    editor.chain().setContent(file.contents).focus('start').run()
-  }
+    if (code) {
+      window.history.replaceState(window.history.state, '', url)
+      const token = await requestAuthorizationToken(code, url)
 
-  const forkRepository = (options) => {
-    return new Promise((resolve, reject) => {
-      github.repos.createFork(options)
-        .then(fork => {
-          const {
-            data: {
-              name,
-              owner: {
-                login
-              }
-            }
-          } = fork
+      // TODO: Add hook to authorize again on 403 response
+      const OctokitRest = Octokit.plugin(restEndpointMethods)
+      const {
+        rest: api
+      } = new OctokitRest({ auth: token })
 
-          const interval = setInterval(() => {
-            try {
-              github.repos.get({
-                owner: login,
-                repo: name
-              })
-            } catch (error) {
-              if (error.status !== 404) reject(error)
-            }
-
-            clearInterval(interval)
-            resolve(fork)
-          }, 2000)
-        })
-        .catch(error => reject(error))
-    })
-  }
-
-  const getOrForkRepository = async () => {
-    let repository
-
-    const {
-      data: {
-        login
-      }
-    } = await github.users.getAuthenticated()
-
-    try {
-      repository = await github.repos.get({
-        owner: login,
-        repo: projectName,
-      });
-    } catch (error) {
-      if (error.status === 404) {
-        repository = await forkRepository({
-          owner: organizationName,
-          repo: projectName
-        })
-      } else {
-        throw error
-      }
-    }
-
-    // Sanity check as the user might have a
-    // similarly named repository that is not a fork
-    if ((login !== organizationName)) {
       const {
         data: {
-          parent
+          login: user
         }
-      } = repository
+      } = await api.users.getAuthenticated()
 
-      if (parent) {
-        const {
-          name: parentName,
-          owner: {
-            login: parentLogin
-          }
-        } = parent
-        if ((parentLogin !== organizationName) && (parentName !== projectName)) {
-          throw `Repository is not a fork of ${organizationName}/${projectName}`
-        }
-      } else {
-        throw `Repository is not a fork of ${organizationName}/${projectName}`
-      }
+      return {api, user}
+    } else {
+      requestAuthorizationCode(url)
     }
-
-    return repository
   }
 
-  const updateFork = async (repository) => {
+  const createRepo = async () => {
     const {
       data: {
-        default_branch: upstreamDefaultBranch,
-      }
-    }  = await github.repos.get({
-      owner: organizationName,
-      repo: projectName,
-    });
-
-    const {
-      data: {
-        object: {
-          sha
+        name: originRepo,
+        owner: {
+          login: originOwner,
         }
       }
-    } = await github.git.getRef({
-      owner: organizationName,
-      repo: projectName,
-      ref: 'heads/' + upstreamDefaultBranch,
+    } = await github.api.repos.createFork({
+      owner: contentOwner,
+      repo: contentRepo,
     })
 
-    const {
-      data: {
-        name,
-        default_branch,
-        owner: {
-          login
-        }
-      }
-    } = repository
-
-    await github.git.updateRef({
-      owner: login,
-      repo: name,
-      ref: 'heads/' + default_branch,
-      sha,
+    return await new Promise((resolve, reject) => {
+      const interval = setInterval(() => {
+        github.api.repos.get({
+          owner: originOwner,
+          repo: originRepo
+        })
+        .then(repo => {
+          clearInterval(interval)
+          resolve(repo)
+        })
+        .catch(error => {
+          if (error.status !== 404) {
+            reject(error)
+          }
+        })
+      }, 1000)
     })
   }
 
-  const createBranch = async (repository, branchName) => {
-    const {
-      data: {
-        default_branch,
-        name,
-        owner: {
-          login
-        }
-      }
-    } = repository
-
-    const {
-      data: {
-        object: {
-          sha
-        }
-      }
-    } = await github.git.getRef({
-      owner: login,
-      repo: name,
-      ref: 'heads/' + default_branch,
-    })
-
-    const branch = await github.git.createRef({
-      owner: login,
-      repo: name,
-      ref: 'refs/heads/' + branchName,
-      sha,
-    });
-
-    return branch
-  }
-
-  const getOrCreateBranch = async (repository, branchName) => {
-    let branch
-
-    const {
-      data: {
-        name,
-        owner: {
-          login
-        }
-      }
-    } = repository
-    const ref = 'heads/' + branchName
+  const requestRepo = async (owner, repo) => {
+    let response
 
     try {
-      branch = await github.git.getRef({
-        owner: login,
-        repo: name,
-        ref
+      response = await github.api.repos.get({
+        owner,
+        repo,
       })
     } catch (error) {
-      if (error.status === 404) {
-        if (login !== organizationName) await updateFork(repository)
-
-        branch = await createBranch(repository, branchName)
+      // TODO: Follow 301 response in case repo was renamed
+      if ((error.status === 404) && (owner !== contentOwner)) {
+        response = await createRepo()
       } else {
         throw error
       }
     }
 
-    return branch
-  }
-
-  const getContent = async (repository, branch, contentPath) => {
     const {
       data: {
-        name,
+        name: originRepo,
         owner: {
-          login
+          login: originOwner,
+        },
+        parent: upstream,
+      }
+    } = response
+
+    // Sanity check to verify the repo is indeed a fork
+    if (originOwner !== contentOwner) {
+      if (upstream) {
+        const {
+          name: upstreamRepo,
+          owner: {
+            login: upstreamOwner
+          }
+        } = upstream
+        if ((upstreamOwner !== contentOwner) && (upstreamRepo !== contentRepo)) {
+          throw `Repo is not a fork of ${contentOwner}/${contentRepo}`
         }
+      } else {
+        throw `Repo is not a fork of ${contentOwner}/${contentRepo}`
       }
-    } = repository
-
-    const {
-      data: {
-        object: {
-          sha
-        }
-      }
-    } = branch
-
-    const content = await github.repos.getContent({
-      owner: login,
-      repo: name,
-      path: contentPath,
-      ref: sha
-    })
-
-    return content
-  }
-
-  const openFile = async (filePath) => {
-    const contentPath = docsPath + filePath + '.md'
-    const branchName = 'edit/' + contentPath.replaceAll(/[\/\.]/g, '-')
-
-    const repository = await getOrForkRepository()
-    const branch = await getOrCreateBranch(repository, branchName)
-    const content = await getContent(repository, branch, contentPath)
-    updateContent(content)
-
-    setRepository(repository)
-    setBranchName(branchName)
-    setContentPath(contentPath)
-  }
-
-  const save = async () => {
-    const branch = await getOrCreateBranch(repository, branchName)
-    const content = await getContent(repository, branch, contentPath)
-
-    const {
-      data: {
-        name,
-        owner: {
-          login
-        }
-      }
-    } = repository
-
-    const {
-      data: {
-        sha: contentSha
-      }
-    } = content
-
-    const file = await unified()
-      .use(htmlParse)
-      .use(htmlToMarkdown)
-      .use(markdownStringify)
-      .process(editor.getHTML())
-
-    let contentData = ''
-
-    if (frontmatter) {
-      contentData += '---\n' + yaml.stringify(frontmatter) + '---\n\n'
     }
 
-    contentData += file.contents
+    return {owner: originOwner, repo: originRepo}
+  }
+
+  const createBranch = async (owner, repo, branch) => {
+    const {
+      data: {
+        default_branch: contentDefaultBranch
+      }
+    } = await github.api.repos.get({
+      owner: contentOwner,
+      repo: contentRepo,
+    })
 
     const {
       data: {
@@ -367,85 +205,193 @@ export default function Editor({ options, className }) {
           sha
         }
       }
-    } = await github.repos.createOrUpdateFileContents({
-      owner: login,
-      repo: name,
-      path: contentPath,
-      sha: contentSha,
-      message: `Edit ${contentPath}`,
-      content: btoa(contentData),
-      branch: branchName,
+    } = await github.api.repos.getBranch({
+      owner: contentOwner,
+      repo: contentRepo,
+      branch: contentDefaultBranch,
+    })
+
+    await github.api.git.createRef({
+      owner,
+      repo,
+      sha,
+      ref: `refs/heads/${branch}`,
     })
   }
 
-  const getOrCreatePullRequest = async () => {
+  const requestBranch = async (owner, repo, branch) => {
+    try {
+      await github.api.repos.getBranch({
+        owner,
+        repo,
+        branch,
+      })
+    } catch (error) {
+      // TODO: Follow 301 response in case branch was renamed
+      if (error.status === 404) {
+        await createBranch(owner, repo, branch)
+      } else {
+        throw error
+      }
+    }
+
+    return branch
+  }
+
+  const requestContent = async (owner, repo, branch, path) => {
+    // TODO: Allow user to create content on 404 response
     const {
       data: {
-        owner: {
-          login
-        }
+        content: contentData
       }
-    } = repository
-
-    const head = login + ':' + branchName
-
-    const pulls = await github.pulls.list({
-      owner: organizationName,
-      repo: projectName,
-      state: 'open',
-      head
+    } = await github.api.repos.getContent({
+      owner,
+      repo,
+      path,
+      ref: `refs/heads/${branch}`
     })
 
-    if (!pulls.data) {
+    const content = atob(contentData)
+    return content
+  }
+
+  const requestCommit = async (owner, repo, branch, path, content) => {
+    const {
+      data: {
+        sha
+      }
+    } = await github.api.repos.getContent({
+      owner,
+      repo,
+      path,
+      ref: `refs/heads/${branch}`
+    })
+
+    await github.api.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      branch,
+      path,
+      sha,
+      content: btoa(content),
+      message: `Edit ${contentPath}`,
+    })
+  }
+
+  const requestPull = async (owner, branch) => {
+    const head = `${owner}:${branch}`
+
+    const {
+      data: pulls
+    } = await github.api.pulls.list({
+      owner: contentOwner,
+      repo: contentRepo,
+      state: 'open',
+      head,
+    })
+
+    // TODO: Allow user to update existing pull requests
+    if (!pulls.length) {
       const {
         data: {
-          default_branch,
+          default_branch: contentDefaultBranch,
         }
-      } = await github.repos.get({
-        owner: organizationName,
-        repo: projectName,
+      } = await github.api.repos.get({
+        owner: contentOwner,
+        repo: contentRepo,
       })
 
-      github.pulls.create({
-        owner: organizationName,
-        repo: projectName,
-        base: default_branch,
+      // TODO: Allow user to write a pull request title and description
+      await github.api.pulls.create({
+        owner: contentOwner,
+        repo: contentRepo,
+        base: contentDefaultBranch,
         head,
+        title: `Edit ${contentPath}`
       })
     }
+  }
+
+  const htmlToMarkdownProcessor = unified()
+    .use(htmlParse)
+    .use(htmlToMarkdown)
+    .use(markdownStringify)
+
+  const markdownToHtmlProcessor = unified()
+    .use(markdownParse)
+    .use(markdownParseFrontmatter, ['yaml'])
+    .use(markdownExtractFrontmatter, { yaml: yaml.parse })
+    .use(markdownToHtml)
+    .use(htmlStringify)
+
+  const getContent = async () => {
+    const html = editor.getHTML()
+
+    let {
+      contents: markdown
+    } = await htmlToMarkdownProcessor.process(html)
+
+    if (contentFrontmatter) {
+      const frontmatter = yaml.stringify(contentFrontmatter)
+      markdown = `---\n${frontmatter}---\n\n${markdown}`
+    }
+
+    return markdown
+  }
+
+  const setContent = async (content) => {
+    const {
+      data: frontmatter,
+      contents: html,
+    } = await markdownToHtmlProcessor.process(content)
+
+    setContentFrontmatter(frontmatter)
+    editor.chain().setContent(html).focus('start').run()
+  }
+
+  const init = async () => {
+    const github = await requestAuthorization()
+
+    const filePath = window.location.pathname.slice(editorBasePath.length)
+    const contentPath = `${docsPath}${filePath}.md`
+    const contentBranch = `edit/${contentPath.replaceAll(/[\/\.]/g, '-')}`
+
+    setGithub(github)
+    setContentBranch(contentBranch)
+    setContentPath(contentPath)
+  }
+
+  const open = async () => {
+    const {owner, repo} = await requestRepo(github.user, contentRepo)
+    const branch = await requestBranch(owner, repo, contentBranch)
+    const content = await requestContent(owner, repo, branch, contentPath)
+    await setContent(content)
+  }
+
+  const save = async () => {
+    const content = await getContent()
+    const {owner, repo} = await requestRepo(github.user, contentRepo)
+    const branch = await requestBranch(owner, repo, contentBranch)
+    await requestCommit(owner, repo, branch, contentPath, content)
   }
 
   const submit = async () => {
-    await save()
-    await getOrCreatePullRequest()
+    const content = await getContent()
+    const {owner, repo} = await requestRepo(github.user, contentRepo)
+    const branch = await requestBranch(owner, repo, contentBranch)
+    await requestCommit(owner, repo, branch, contentPath, content)
+    await requestPull(owner, branch)
   }
 
   useEffect(() => {
-    if (github) {
-      const filePath = window.location.pathname.slice(editBaseUrl.length)
-      if (filePath) {
-        openFile(filePath)
-      } else {
-        throw 'No file path'
-      }
-    }
-  }, [github])
+    init()
+  }, [])
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token')
-    if (token) {
-      const OctokitRest = Octokit.plugin(restEndpointMethods);
-      const octokitRest = new OctokitRest({ auth: token });
-      setGithub(octokitRest.rest)
-    } else {
-      const parameters = new URLSearchParams(window.location.search)
-      if (parameters.has('code')) {
-        getToken(parameters.get('code'))
-      } else {
-        getCode()
-      }
+    if (github && contentBranch && contentPath) {
+      open()
     }
-  }, [])
+  }, [github, contentBranch, contentPath])
 
   return (
     <>
