@@ -258,7 +258,8 @@ export default function Editor({ options, className }) {
   const requestCommit = async (owner, repo, branch, path, content) => {
     const {
       data: {
-        sha
+        sha,
+        content: remoteContentData,
       }
     } = await github.api.repos.getContent({
       owner,
@@ -267,15 +268,19 @@ export default function Editor({ options, className }) {
       ref: `refs/heads/${branch}`
     })
 
-    await github.api.repos.createOrUpdateFileContents({
-      owner,
-      repo,
-      branch,
-      path,
-      sha,
-      content: btoa(content),
-      message: `Edit ${contentPath}`,
-    })
+    const contentData = btoa(content)
+
+    if (contentData.trim() !== remoteContentData.trim()) {
+      await github.api.repos.createOrUpdateFileContents({
+        owner,
+        repo,
+        branch,
+        path,
+        sha,
+        content: contentData,
+        message: `Edit ${contentPath}`,
+      })
+    }
   }
 
   const requestPull = async (owner, branch) => {
