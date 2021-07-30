@@ -43,7 +43,7 @@ export default function Editor({ options, className }) {
     docsPath,
     github: {
       clientId: authorizationClientId,
-      tokenUri: authorizationTokenUrl,
+      tokenUrl: authorizationTokenUrl,
     },
   } = options
 

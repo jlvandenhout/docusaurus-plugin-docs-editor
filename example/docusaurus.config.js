@@ -113,8 +113,8 @@ module.exports = {
       {
         docsPath: 'example/docs',
         github: {
-          clientId: 'f46b54ebe4b6254c91bd',
-          tokenUri: 'https://secret-stream-27092.herokuapp.com/authorize/'
+          clientId: process.env.CLIENT_ID,
+          tokenUrl: process.env.TOKEN_URL,
         }
       }
     ]
