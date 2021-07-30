@@ -1,0 +1,1 @@
+(self.webpackChunkexample=self.webpackChunkexample||[]).push([[755],{9453:function(e){"use strict";e.exports=JSON.parse('{"docsPath":"example/docs","github":{"clientId":"e4f8eaaa7cdc4eeb2889","tokenUrl":"http://localhost:9999/authenticate/"},"id":"default"}')}}]);
