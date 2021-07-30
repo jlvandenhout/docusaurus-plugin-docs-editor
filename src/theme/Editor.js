@@ -92,11 +92,19 @@ export default function Editor({ options, className }) {
       window.history.replaceState(window.history.state, '', url)
       const token = await requestAuthorizationToken(code, url)
 
-      // TODO: Add hook to authorize again on 403 response
       const OctokitRest = Octokit.plugin(restEndpointMethods)
       const {
-        rest: api
+        hook,
+        rest: api,
       } = new OctokitRest({ auth: token })
+
+      hook.error('request', async (error) => {
+        if (error.status === 403) {
+          await requestAuthorization()
+        } else {
+          throw error
+        }
+      })
 
       const {
         data: {
