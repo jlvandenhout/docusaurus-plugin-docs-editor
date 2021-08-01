@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import clsx from 'clsx'
 import Head from '@docusaurus/Head'
 
@@ -31,9 +31,7 @@ const EditorIcon = ({ editor, name, action, children }) => {
 }
 
 
-export default function EditorMenu({ editor, save, submit, className }) {
-  const [syncing, setSyncing] = useState(false)
-
+export default function EditorMenu({ editor, save, submit, syncing, className }) {
   const changeFontStyle = (event) => {
     event.preventDefault()
 
@@ -64,18 +62,14 @@ export default function EditorMenu({ editor, save, submit, className }) {
     return active.length == 1 ? active[0] : ''
   }
 
-  const onSave = async () => {
+  const onSave = () => {
     editor.chain().focus().run()
-    setSyncing(true)
-    await save()
-    setSyncing(false)
+    save()
   }
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     editor.chain().focus().run()
-    setSyncing(true)
-    await submit()
-    setSyncing(false)
+    submit()
   }
 
   if (!editor) {

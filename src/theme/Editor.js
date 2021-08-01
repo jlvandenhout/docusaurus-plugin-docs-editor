@@ -33,6 +33,8 @@ export default function Editor({ options, className }) {
   const [contentBranch, setContentBranch] = useState()
 
   const [github, setGithub] = useState()
+  const [syncing, setSyncing] = useState(false)
+
 
   const editorBasePath = useBaseUrl('/edit')
 
@@ -264,6 +266,7 @@ export default function Editor({ options, className }) {
   }
 
   const requestCommit = async (owner, repo, branch, path, content) => {
+    setSyncing(true)
     const {
       data: {
         sha,
@@ -307,11 +310,13 @@ export default function Editor({ options, className }) {
             if (remoteSha != sha) {
               // Remote file is updated
               clearInterval(interval)
+              setSyncing(false)
               resolve()
             }
           })
           .catch(error => {
             if (error.status !== 404) {
+              setSyncing(false)
               reject(error)
             }
           })
@@ -439,7 +444,7 @@ export default function Editor({ options, className }) {
     <>
       {github ?
         <div className={clsx('editor', className)}>
-          <EditorMenu editor={editor} save={save} submit={submit} />
+          <EditorMenu editor={editor} save={save} submit={submit} syncing={syncing} />
           <EditorPage editor={editor} />
         </div>
       :
