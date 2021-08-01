@@ -36,17 +36,23 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
     event.preventDefault()
 
     const value = event.target.value
-    if (value == 'paragraph') {
-      editor.chain().focus().setParagraph().run()
+    if (value === 'code') {
+      editor.chain().focus().setParagraph().setCode().run()
+    } else if (value === 'paragraph') {
+      editor.chain().focus().unsetCode().setParagraph().run()
     } else {
       const level = parseInt(value)
       if (headingLevels.includes(level)) {
-        editor.chain().focus().toggleHeading({ level }).run()
+        editor.chain().focus().unsetCode().setHeading({ level }).run()
       }
     }
   }
 
   const checkFontStyle = () => {
+    if (editor.isActive('code')) {
+      return 'code'
+    }
+
     const active = []
 
     if (editor.isActive('paragraph')) {
@@ -102,6 +108,7 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
               {headingLevels.map((level) => {
                 return <option key={level} value={level}>{`Heading ${level}`}</option>
               })}
+              <option value='code'>Inline code</option>
             </select>
           </EditorGroup>
           <EditorGroup>
@@ -110,9 +117,6 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
             </EditorIcon>
             <EditorIcon editor={editor} action={() => editor.chain().focus().toggleItalic().run()} name='italic'>
               format_italic
-            </EditorIcon>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().toggleCode().run()} name='code'>
-              code
             </EditorIcon>
           </EditorGroup>
           <EditorGroup>
