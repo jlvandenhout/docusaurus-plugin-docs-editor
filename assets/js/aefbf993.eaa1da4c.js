@@ -1,0 +1,1 @@
+(self.webpackChunkexample=self.webpackChunkexample||[]).push([[821],{9453:function(e){"use strict";e.exports=JSON.parse('{"docsPath":"example/docs","github":{"clientId":"e4f8eaaa7cdc4eeb2889","tokenUrl":"https://tranquil-meadow-04453.herokuapp.com/authenticate/"},"id":"default"}')}}]);
