@@ -288,6 +288,35 @@ export default function Editor({ options, className }) {
         content: contentData,
         message: `Edit ${contentPath}`,
       })
+
+      await new Promise((resolve, reject) => {
+        const interval = setInterval(() => {
+          github.api.repos.getContent({
+            owner,
+            repo,
+            path,
+            ref: `refs/heads/${branch}`
+          })
+          .then(data => {
+            const {
+              data: {
+                sha: remoteSha,
+              }
+            } = data
+
+            if (remoteSha != sha) {
+              // Remote file is updated
+              clearInterval(interval)
+              resolve()
+            }
+          })
+          .catch(error => {
+            if (error.status !== 404) {
+              reject(error)
+            }
+          })
+        }, 1000)
+      })
     }
   }
 

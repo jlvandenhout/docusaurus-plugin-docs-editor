@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import clsx from 'clsx'
 import Head from '@docusaurus/Head'
 
@@ -32,6 +32,8 @@ const EditorIcon = ({ editor, name, action, children }) => {
 
 
 export default function EditorMenu({ editor, save, submit, className }) {
+  const [syncing, setSyncing] = useState(false)
+
   const changeFontStyle = (event) => {
     event.preventDefault()
 
@@ -60,6 +62,20 @@ export default function EditorMenu({ editor, save, submit, className }) {
     }
 
     return active.length == 1 ? active[0] : ''
+  }
+
+  const onSave = async () => {
+    editor.chain().focus().run()
+    setSyncing(true)
+    await save()
+    setSyncing(false)
+  }
+
+  const onSubmit = async () => {
+    editor.chain().focus().run()
+    setSyncing(true)
+    await submit()
+    setSyncing(false)
   }
 
   if (!editor) {
@@ -132,10 +148,15 @@ export default function EditorMenu({ editor, save, submit, className }) {
           </EditorIcon>
         </EditorGroup>
         <EditorGroup>
-          <button className='editor__button margin-horiz--xs padding-horiz--sm' onClick={save}>
-            <span className='material-icons'>file_download</span> Save
+          <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSave}>
+            {syncing ?
+              <span className='editor__loading material-icons'>autorenew</span>
+            :
+              <span className='material-icons'>file_download</span>
+            }
+             Save
           </button>
-          <button className='editor__button margin-horiz--xs padding-horiz--sm' onClick={submit}>
+          <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSubmit}>
             <span className='material-icons'>file_upload</span> Submit
           </button>
         </EditorGroup>
