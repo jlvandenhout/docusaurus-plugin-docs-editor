@@ -11,9 +11,9 @@ jobs:
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          name: jlvandenhout/docusaurus-plugin-docs-editor-preview
+          repository: jlvandenhout/docusaurus-plugin-docs-editor-preview
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
@@ -31,9 +31,9 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          name: jlvandenhout/docusaurus-plugin-docs-editor-preview
+          repository: jlvandenhout/docusaurus-plugin-docs-editor-preview
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
