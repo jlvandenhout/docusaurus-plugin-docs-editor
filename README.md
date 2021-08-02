@@ -21,15 +21,23 @@ module.exports = {
     [
       '@jlvandenhout/docusaurus-plugin-docs-editor',
       {
+        // REQUIRED - The base route to the editor
+        route: 'edit'
         // The path to the docs section in your repository
-        docsPath: 'docs',
+        docs: {
+          // The username that owns the docs, defaults to siteConfig.organizationName
+          owner: '',
+          // The repository that contains the docs, defaults to siteConfig.projectName
+          repo: '',
+          path: 'docs',
+        }
 
         // GitHub OAuth Application settings
         github: {
-          // The Client ID you got from the GitHub OAuth App setup
-          clientId: '[CLIENT_ID]',
-          // The plugin will append the authorization code to this URL
-          tokenUrl: '[TOKEN_URL]'
+          // REQUIRED - The Client ID you got from the GitHub OAuth App setup
+          clientId: '',
+          // REQUIRED - The plugin will append the authorization code to this URL
+          tokenUrl: ''
         }
       }
     ]

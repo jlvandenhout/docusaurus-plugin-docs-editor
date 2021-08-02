@@ -36,25 +36,18 @@ export default function Editor({ options, className }) {
   const [syncing, setSyncing] = useState(false)
 
 
-  const editorBasePath = useBaseUrl('/edit')
+
+  const context = useDocusaurusContext()
+  const editorBasePath = useBaseUrl(options.route)
+
+  const docsPath = options.docsPath || 'docs'
+  const docsOwner = options.docs.owner || context.siteConfig.organizationName
+  const docsRepo = options.docs.repo || context.siteConfig.projectName
 
   const authorizationCodeUrl = 'https://github.com/login/oauth/authorize'
   const authorizationScope = 'public_repo'
-
-  const {
-    docsPath,
-    github: {
-      clientId: authorizationClientId,
-      tokenUrl: authorizationTokenUrl,
-    },
-  } = options
-
-  const {
-    siteConfig: {
-      organizationName: contentOwner,
-      projectName: contentRepo,
-    },
-  } = useDocusaurusContext()
+  const authorizationClientId = options.github.clientId
+  const authorizationTokenUrl = options.github.tokenUrl
 
   const editor = useEditor({
     extensions: [
@@ -129,8 +122,8 @@ export default function Editor({ options, className }) {
         }
       }
     } = await github.api.repos.createFork({
-      owner: contentOwner,
-      repo: contentRepo,
+      owner: docsOwner,
+      repo: docsRepo,
     })
 
     return await new Promise((resolve, reject) => {
@@ -162,7 +155,7 @@ export default function Editor({ options, className }) {
       })
     } catch (error) {
       // TODO: Follow 301 response in case repo was renamed
-      if ((error.status === 404) && (owner !== contentOwner)) {
+      if ((error.status === 404) && (owner !== docsOwner)) {
         response = await createRepo()
       } else {
         throw error
@@ -180,7 +173,7 @@ export default function Editor({ options, className }) {
     } = response
 
     // Sanity check to verify the repo is indeed a fork
-    if (originOwner !== contentOwner) {
+    if (originOwner !== docsOwner) {
       if (upstream) {
         const {
           name: upstreamRepo,
@@ -188,11 +181,11 @@ export default function Editor({ options, className }) {
             login: upstreamOwner
           }
         } = upstream
-        if ((upstreamOwner !== contentOwner) && (upstreamRepo !== contentRepo)) {
-          throw `Repo is not a fork of ${contentOwner}/${contentRepo}`
+        if ((upstreamOwner !== docsOwner) && (upstreamRepo !== docsRepo)) {
+          throw `Repo is not a fork of ${docsOwner}/${docsRepo}`
         }
       } else {
-        throw `Repo is not a fork of ${contentOwner}/${contentRepo}`
+        throw `Repo is not a fork of ${docsOwner}/${docsRepo}`
       }
     }
 
@@ -205,8 +198,8 @@ export default function Editor({ options, className }) {
         default_branch: contentDefaultBranch
       }
     } = await github.api.repos.get({
-      owner: contentOwner,
-      repo: contentRepo,
+      owner: docsOwner,
+      repo: docsRepo,
     })
 
     const {
@@ -216,8 +209,8 @@ export default function Editor({ options, className }) {
         }
       }
     } = await github.api.repos.getBranch({
-      owner: contentOwner,
-      repo: contentRepo,
+      owner: docsOwner,
+      repo: docsRepo,
       branch: contentDefaultBranch,
     })
 
@@ -331,8 +324,8 @@ export default function Editor({ options, className }) {
     const {
       data: pulls
     } = await github.api.pulls.list({
-      owner: contentOwner,
-      repo: contentRepo,
+      owner: docsOwner,
+      repo: docsRepo,
       state: 'open',
       head,
     })
@@ -344,14 +337,14 @@ export default function Editor({ options, className }) {
           default_branch: contentDefaultBranch,
         }
       } = await github.api.repos.get({
-        owner: contentOwner,
-        repo: contentRepo,
+        owner: docsOwner,
+        repo: docsRepo,
       })
 
       // TODO: Allow user to write a pull request title and description
       await github.api.pulls.create({
-        owner: contentOwner,
-        repo: contentRepo,
+        owner: docsOwner,
+        repo: docsRepo,
         base: contentDefaultBranch,
         head,
         title: `Edit ${contentPath}`
@@ -409,7 +402,7 @@ export default function Editor({ options, className }) {
   }
 
   const open = async () => {
-    const {owner, repo} = await requestRepo(github.user, contentRepo)
+    const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
     const content = await requestContent(owner, repo, branch, contentPath)
     await setContent(content)
@@ -417,14 +410,14 @@ export default function Editor({ options, className }) {
 
   const save = async () => {
     const content = await getContent()
-    const {owner, repo} = await requestRepo(github.user, contentRepo)
+    const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
     await requestCommit(owner, repo, branch, contentPath, content)
   }
 
   const submit = async () => {
     const content = await getContent()
-    const {owner, repo} = await requestRepo(github.user, contentRepo)
+    const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
     await requestCommit(owner, repo, branch, contentPath, content)
     await requestPull(owner, branch)
