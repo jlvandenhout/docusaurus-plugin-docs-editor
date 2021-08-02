@@ -109,7 +109,7 @@ module.exports = {
   ],
   plugins: [
     [
-      './..',
+      '@jlvandenhout/docusaurus-plugin-docs-editor',
       {
         docsPath: 'example/docs',
         github: {
