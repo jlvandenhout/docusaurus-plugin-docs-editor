@@ -4,13 +4,15 @@ A Markdown editor for Docusaurus content using GitHub to commit any progress and
 [**LIVE PREVIEW**](https://jlvandenhout.github.io/docusaurus-plugin-docs-editor)
 
 ## Usage
-Add this plugin to your project:
+To be able to use this plugin you will need to set up GitHub authorization. To do this, set up a [GitHub OAuth App](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to let users authorize your app and a server that uses the Client Secret you got from GitHub during the app setup to swap a users authorization code for an access token (have a look at [Gatekeeper](https://github.com/prose/gatekeeper) for an easy setup).
+
+Then add this plugin to your project:
 
 ```
 yarn add jlvandenhout/docusaurus-plugin-docs-editor
 ```
 
-Then enable the plugin in your Docusaurus configuration:
+And enable the plugin in your Docusaurus configuration and update the settings with the Client ID you got while setting up the GitHub OAuth App and the URL to your authorization endpoint:
 
 ```
 module.exports = {
@@ -20,25 +22,17 @@ module.exports = {
       '@jlvandenhout/docusaurus-plugin-docs-editor',
       {
         // The path to the docs section in your repository
-        docsPath: 'example/docs',
+        docsPath: 'docs',
 
         // GitHub OAuth Application settings
         github: {
-          clientId: '[GITHUB_CLIENT_ID]',
-          tokenUrl: '[GITHUB_TOKEN_URI]'
+          // The Client ID you got from the GitHub OAuth App setup
+          clientId: '[CLIENT_ID]',
+          // The plugin will append the authorization code to this URL
+          tokenUrl: '[TOKEN_URL]'
         }
       }
     ]
   ]
 };
-```
-
-## Example
-To run the example webpage locally, you will need to set up a [GitHub OAuth App](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to let users authorize your app from `localhost` and a server that manages your Client Secret and allows users to swap their authorization code for an access token (have a look at [Gatekeeper](https://github.com/prose/gatekeeper) how to do that).
-
-Then navigate to the example directory and start the development server with the `CLIENT_ID` and `TOKEN_URL` environment variables set to the Client ID you received from GitHub and the URL to your authorization server:
-
-```
-cd example
-CLIENT_ID=12345 TOKEN_URL=http://example.com yarn start
 ```
