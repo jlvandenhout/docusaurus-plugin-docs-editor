@@ -35,12 +35,10 @@ export default function Editor({ options, className }) {
   const [github, setGithub] = useState()
   const [syncing, setSyncing] = useState(false)
 
-
-
   const context = useDocusaurusContext()
   const editorBasePath = useBaseUrl(options.route || 'edit')
 
-  const docsPath = options.docsPath || 'docs'
+  const docsPath = options.docs.path || 'docs'
   const docsOwner = options.docs.owner || context.siteConfig.organizationName
   const docsRepo = options.docs.repo || context.siteConfig.projectName
 
