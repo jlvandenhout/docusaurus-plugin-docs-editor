@@ -1,7 +1,7 @@
 # Docs Editor
 A Markdown editor for Docusaurus content using GitHub to commit any progress and allow contributers to create a pull request to the upstream repository without the need to know Markdown or GitHub.
 
-**WORK IN PROGRESS: This project is in early development so expect functionality to be broken!**
+[**LIVE PREVIEW**](https://jlvandenhout.github.io/docusaurus-plugin-docs-editor)
 
 ## Usage
 Add this plugin to your project:
@@ -34,7 +34,7 @@ module.exports = {
 ```
 
 ## Example
-To run the example webpage, you will need to set up a [GitHub OAuth App](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to let users authorize your app and a server that manages your Client Secret and allows users to swap their authorization code for an access token (have a look at [Gatekeeper](https://github.com/prose/gatekeeper) how to do that).
+To run the example webpage locally, you will need to set up a [GitHub OAuth App](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to let users authorize your app from `localhost` and a server that manages your Client Secret and allows users to swap their authorization code for an access token (have a look at [Gatekeeper](https://github.com/prose/gatekeeper) how to do that).
 
 Then navigate to the example directory and start the development server with the `CLIENT_ID` and `TOKEN_URL` environment variables set to the Client ID you received from GitHub and the URL to your authorization server:
 
