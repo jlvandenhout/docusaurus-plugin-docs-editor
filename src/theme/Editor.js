@@ -257,7 +257,6 @@ export default function Editor({ options, className }) {
   }
 
   const requestCommit = async (owner, repo, branch, path, content) => {
-    setSyncing(true)
     const {
       data: {
         sha,
@@ -273,6 +272,7 @@ export default function Editor({ options, className }) {
     const contentData = btoa(content)
 
     if (contentData.trim() !== remoteContentData.trim()) {
+      setSyncing(true)
       await github.api.repos.createOrUpdateFileContents({
         owner,
         repo,
