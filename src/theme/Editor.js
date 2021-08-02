@@ -38,7 +38,7 @@ export default function Editor({ options, className }) {
 
 
   const context = useDocusaurusContext()
-  const editorBasePath = useBaseUrl(options.route)
+  const editorBasePath = useBaseUrl(options.route || 'edit')
 
   const docsPath = options.docsPath || 'docs'
   const docsOwner = options.docs.owner || context.siteConfig.organizationName

@@ -17,7 +17,7 @@ module.exports = function pluginDocsEditor(context, options) {
       );
 
       addRoute({
-        path: baseUrl + options.route,
+        path: baseUrl + (options.route || 'edit'),
         exact: false,
         component: '@theme/Editor',
         modules: {
