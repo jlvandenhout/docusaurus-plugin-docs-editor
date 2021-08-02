@@ -18,7 +18,6 @@ jobs:
         with:
           node-version: '12.x'
       - name: Test Build
-        working-directory: example
         run: |
           if [ -e yarn.lock ]; then
             yarn install --frozen-lockfile
@@ -47,7 +46,6 @@ jobs:
           GIT_USER: git
           CLIENT_ID: efc6c2ca30ec308ce283
           TOKEN_URL: https://polar-falls-16277.herokuapp.com/authenticate/
-        working-directory: example
         run: |
           git config --global user.email "jlvandenhout@gmail.com"
           git config --global user.name "Jeroen van den Hout"
