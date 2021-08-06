@@ -13,11 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: jlvandenhout/docusaurus-plugin-docs-editor-preview
+          submodules: 'true'
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
       - name: Test Build
+        working-directory: preview
         run: |
           if [ -e yarn.lock ]; then
             yarn install --frozen-lockfile
@@ -33,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: jlvandenhout/docusaurus-plugin-docs-editor-preview
+          submodules: 'true'
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
@@ -41,6 +42,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
       - name: Release to GitHub Pages
+        working-directory: preview
         env:
           USE_SSH: true
           GIT_USER: git
