@@ -112,3 +112,13 @@
   padding: 4rem 10%;
   background-color: var(--ifm-color-gray-0);
 }
+
+.editor__codeblock {
+  background-color: var(--ifm-color-gray-100);
+  border-radius: var(--ifm-global-radius);
+}
+
+.editor__language-selector {
+  background-color: var(--ifm-color-gray-100);
+  border: 0;
+}

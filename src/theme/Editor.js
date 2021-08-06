@@ -4,8 +4,14 @@ import clsx from 'clsx'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useBaseUrl from '@docusaurus/useBaseUrl'
 
-import { useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
+import { useEditor, ReactNodeViewRenderer } from '@tiptap/react'
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+
+import lowlight from 'lowlight'
+
 import { Octokit } from '@octokit/core'
 import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
@@ -15,8 +21,8 @@ import htmlParseCodeBlock from 'rehype-highlight'
 import htmlToMarkdown from 'rehype-remark'
 import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
+import markdownParseCodeblock from 'remark-highlight.js'
 import markdownParseFrontmatter from 'remark-frontmatter'
-import markdownParseCodeBlock from 'remark-highlight'
 import markdownExtractFrontmatter from 'remark-extract-frontmatter'
 import markdownToHtml from 'remark-rehype'
 import unified from 'unified'
@@ -51,7 +57,9 @@ export default function Editor({ options, className }) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      Document,
+      Paragraph,
+      Text,
     ],
     autofocus: 'start',
   })
@@ -362,7 +370,6 @@ export default function Editor({ options, className }) {
     .use(markdownParse)
     .use(markdownParseFrontmatter, ['yaml'])
     .use(markdownExtractFrontmatter, { yaml: yaml.parse })
-    .use(markdownParseCodeBlock)
     .use(markdownToHtml)
     .use(htmlStringify)
 
@@ -386,7 +393,7 @@ export default function Editor({ options, className }) {
       data: frontmatter,
       contents: html,
     } = await markdownToHtmlProcessor.process(content)
-
+    console.log(html)
     setContentFrontmatter(frontmatter)
     editor.chain().setContent(html).focus('start').run()
   }
