@@ -248,8 +248,20 @@ export default function Editor({ options, className }) {
     } = await github.api.repos.getContent({
       owner,
       repo,
-      path,
+      path: `${path}.md`,
       ref: `refs/heads/${branch}`
+    })
+    .catch((error) => {
+      if (error.status === 404) {
+        return github.api.repos.getContent({
+          owner,
+          repo,
+          path: `${path}.mdx`,
+          ref: `refs/heads/${branch}`
+        })
+      } else {
+        throw error
+      }
     })
 
     const content = atob(contentData)
@@ -391,8 +403,8 @@ export default function Editor({ options, className }) {
     const github = await requestAuthorization()
 
     const filePath = window.location.pathname.slice(editorBasePath.length)
-    const contentPath = `${docsPath}${filePath}.md`
-    const contentBranch = `edit/${contentPath.replaceAll(/[\/\.]/g, '-')}`
+    const contentPath = `${docsPath}${filePath}`
+    const contentBranch = `edit/${contentPath.replaceAll(/[\/]/g, '-')}`
 
     setGithub(github)
     setContentBranch(contentBranch)
