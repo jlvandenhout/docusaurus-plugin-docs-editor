@@ -11,10 +11,12 @@ import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
 import htmlStringify from 'rehype-stringify'
 import htmlParse from 'rehype-parse'
+import htmlParseCodeBlock from 'rehype-highlight'
 import htmlToMarkdown from 'rehype-remark'
 import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
 import markdownParseFrontmatter from 'remark-frontmatter'
+import markdownParseCodeBlock from 'remark-highlight'
 import markdownExtractFrontmatter from 'remark-extract-frontmatter'
 import markdownToHtml from 'remark-rehype'
 import unified from 'unified'
@@ -352,6 +354,7 @@ export default function Editor({ options, className }) {
 
   const htmlToMarkdownProcessor = unified()
     .use(htmlParse)
+    .use(htmlParseCodeBlock)
     .use(htmlToMarkdown)
     .use(markdownStringify)
 
@@ -359,6 +362,7 @@ export default function Editor({ options, className }) {
     .use(markdownParse)
     .use(markdownParseFrontmatter, ['yaml'])
     .use(markdownExtractFrontmatter, { yaml: yaml.parse })
+    .use(markdownParseCodeBlock)
     .use(markdownToHtml)
     .use(htmlStringify)
 
