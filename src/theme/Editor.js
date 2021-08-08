@@ -34,7 +34,6 @@ import htmlParseCodeBlock from 'rehype-highlight'
 import htmlToMarkdown from 'rehype-remark'
 import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
-import markdownParseCodeblock from 'remark-highlight.js'
 import markdownParseFrontmatter from 'remark-frontmatter'
 import markdownExtractFrontmatter from 'remark-extract-frontmatter'
 import markdownToHtml from 'remark-rehype'
@@ -45,6 +44,7 @@ import EditorMenu from '@theme/EditorMenu'
 import EditorPage from '@theme/EditorPage'
 import EditorLogin from '@theme/EditorLogin'
 
+import 'highlight.js/styles/github.css'
 import './Editor.css'
 
 
@@ -74,7 +74,7 @@ export default function Editor({ options, className }) {
       Bold,
       BulletList,
       Code,
-      CodeBlock,
+      CodeBlockLowlight.configure({lowlight}),
       Document,
       Dropcursor,
       HardBreak,
