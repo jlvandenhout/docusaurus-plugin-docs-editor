@@ -1,7 +1,12 @@
 const path = require('path')
 
 module.exports = function pluginDocsEditor(context, options) {
-  const { baseUrl } = context
+  let { baseUrl } = context
+
+  let route = options.route || 'edit'
+  if (route.startsWith('/')) {
+    route = route.slice(1)
+  }
 
   return {
     name: 'docusaurus-plugin-docs-editor',
@@ -9,7 +14,8 @@ module.exports = function pluginDocsEditor(context, options) {
       return path.resolve(__dirname, './theme')
     },
     async contentLoaded({ actions }) {
-      const { createData, addRoute } = actions
+
+      const { createData, setGlobalData, addRoute } = actions
 
       const optionsPath = await createData(
         'editor.json',
@@ -17,12 +23,16 @@ module.exports = function pluginDocsEditor(context, options) {
       );
 
       addRoute({
-        path: baseUrl + (options.route || 'edit'),
+        path: `${baseUrl}${route}`,
         exact: false,
         component: '@theme/Editor',
         modules: {
           options: optionsPath,
         },
+      })
+
+      setGlobalData({
+        route
       })
     },
   }

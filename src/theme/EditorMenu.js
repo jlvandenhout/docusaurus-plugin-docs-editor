@@ -77,6 +77,25 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
     submit()
   }
 
+  const toggleLink = () => {
+    if (editor.isActive('link')) {
+      editor
+        .chain()
+        .focus()
+        .unsetLink()
+        .run()
+    } else {
+      const url = window.prompt('URL')
+
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run()
+    }
+  }
+
   if (!editor) {
     return null
   }
@@ -116,6 +135,9 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
             </EditorIcon>
             <EditorIcon editor={editor} action={() => editor.chain().focus().toggleItalic().run()} name='italic'>
               format_italic
+            </EditorIcon>
+            <EditorIcon editor={editor} action={toggleLink} name='link'>
+              link
             </EditorIcon>
           </EditorGroup>
           <EditorGroup>

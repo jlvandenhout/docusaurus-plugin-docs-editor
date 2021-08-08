@@ -17,6 +17,7 @@ import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import Italic from '@tiptap/extension-italic'
+import Link from '@tiptap/extension-link'
 import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
 import Paragraph from '@tiptap/extension-paragraph'
@@ -77,6 +78,7 @@ export default function Editor({ options, className }) {
       History,
       HorizontalRule,
       Italic,
+      Link.configure({openOnClick: false}),
       ListItem,
       OrderedList,
       Paragraph,
@@ -422,7 +424,7 @@ export default function Editor({ options, className }) {
     const github = await requestAuthorization()
 
     const filePath = window.location.pathname.slice(editorBasePath.length)
-    const contentPath = `${docsPath}${filePath}.md`
+    const contentPath = `${docsPath}${filePath}`
     const contentBranch = `edit/${contentPath.replaceAll(/[\/\.]/g, '-')}`
 
     setGithub(github)
