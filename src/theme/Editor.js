@@ -16,6 +16,7 @@ import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
+import Image from '@tiptap/extension-image'
 import Italic from '@tiptap/extension-italic'
 import Link from '@tiptap/extension-link'
 import ListItem from '@tiptap/extension-list-item'
@@ -78,6 +79,7 @@ export default function Editor({ options, className }) {
       History,
       HorizontalRule,
       Italic,
+      Image,
       Link.configure({openOnClick: false}),
       ListItem,
       OrderedList,
