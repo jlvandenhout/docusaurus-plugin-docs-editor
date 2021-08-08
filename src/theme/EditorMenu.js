@@ -77,6 +77,17 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
     submit()
   }
 
+  const setLink = () => {
+    const url = window.prompt('URL')
+
+    this.editor
+      .chain()
+      .focus()
+      .extendMarkRange('link')
+      .setLink({ href: url })
+      .run()
+  }
+
   if (!editor) {
     return null
   }
