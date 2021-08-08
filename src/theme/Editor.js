@@ -78,7 +78,7 @@ export default function Editor({ options, className }) {
       History,
       HorizontalRule,
       Italic,
-      Link,
+      Link.configure({openOnClick: false}),
       ListItem,
       OrderedList,
       Paragraph,
