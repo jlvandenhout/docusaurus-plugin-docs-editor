@@ -4,13 +4,26 @@ import clsx from 'clsx'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useBaseUrl from '@docusaurus/useBaseUrl'
 
+import lowlight from 'lowlight'
+
 import { useEditor, ReactNodeViewRenderer } from '@tiptap/react'
+import Blockquote from '@tiptap/extension-blockquote'
+import Bold from '@tiptap/extension-bold'
+import BulletList from '@tiptap/extension-bullet-list'
+import Code from '@tiptap/extension-code'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Document from '@tiptap/extension-document'
+import Dropcursor from '@tiptap/extension-dropcursor'
+import HardBreak from '@tiptap/extension-hard-break'
+import Heading from '@tiptap/extension-heading'
+import History from '@tiptap/extension-history'
+import HorizontalRule from '@tiptap/extension-horizontal-rule'
+import Italic from '@tiptap/extension-italic'
+import Link from '@tiptap/extension-link'
+import ListItem from '@tiptap/extension-list-item'
+import OrderedList from '@tiptap/extension-ordered-list'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-
-import lowlight from 'lowlight'
 
 import { Octokit } from '@octokit/core'
 import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
@@ -57,7 +70,21 @@ export default function Editor({ options, className }) {
 
   const editor = useEditor({
     extensions: [
+      Blockquote,
+      Bold,
+      BulletList,
+      Code,
+      CodeBlock,
       Document,
+      Dropcursor,
+      HardBreak,
+      Heading,
+      History,
+      HorizontalRule,
+      Italic,
+      Link.configure({openOnClick: false}),
+      ListItem,
+      OrderedList,
       Paragraph,
       Text,
     ],
@@ -402,7 +429,7 @@ export default function Editor({ options, className }) {
     const github = await requestAuthorization()
 
     const filePath = window.location.pathname.slice(editorBasePath.length)
-    const contentPath = `${docsPath}${filePath}.md`
+    const contentPath = `${docsPath}${filePath}`
     const contentBranch = `edit/${contentPath.replaceAll(/[\/\.]/g, '-')}`
 
     setGithub(github)

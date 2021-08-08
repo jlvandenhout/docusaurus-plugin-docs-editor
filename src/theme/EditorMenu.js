@@ -37,23 +37,22 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
 
     const value = event.target.value
     if (value === 'code') {
-      editor.chain().focus().setParagraph().setCode().run()
+      editor.chain().focus().clearNodes().setCode().run()
     } else if (value === 'paragraph') {
       editor.chain().focus().unsetCode().setParagraph().run()
     } else {
       const level = parseInt(value)
       if (headingLevels.includes(level)) {
-        editor.chain().focus().unsetCode().setHeading({ level }).run()
+        editor.chain().focus().clearNodes().unsetCode().setHeading({ level }).selectParentNode().unsetCode().run()
       }
     }
   }
 
   const checkFontStyle = () => {
-    if (editor.isActive('code')) {
-      return 'code'
-    }
-
     const active = []
+    if (editor.isActive('code')) {
+      active.push('code')
+    }
 
     if (editor.isActive('paragraph')) {
       active.push('paragraph')
@@ -76,6 +75,25 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
   const onSubmit = () => {
     editor.chain().focus().run()
     submit()
+  }
+
+  const toggleLink = () => {
+    if (editor.isActive('link')) {
+      editor
+        .chain()
+        .focus()
+        .unsetLink()
+        .run()
+    } else {
+      const url = window.prompt('URL')
+
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run()
+    }
   }
 
   if (!editor) {
@@ -117,6 +135,9 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
             </EditorIcon>
             <EditorIcon editor={editor} action={() => editor.chain().focus().toggleItalic().run()} name='italic'>
               format_italic
+            </EditorIcon>
+            <EditorIcon editor={editor} action={toggleLink} name='link'>
+              link
             </EditorIcon>
           </EditorGroup>
           <EditorGroup>
