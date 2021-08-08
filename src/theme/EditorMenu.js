@@ -37,23 +37,22 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
 
     const value = event.target.value
     if (value === 'code') {
-      editor.chain().focus().setParagraph().setCode().run()
+      editor.chain().focus().clearNodes().setCode().run()
     } else if (value === 'paragraph') {
       editor.chain().focus().unsetCode().setParagraph().run()
     } else {
       const level = parseInt(value)
       if (headingLevels.includes(level)) {
-        editor.chain().focus().unsetCode().setHeading({ level }).run()
+        editor.chain().focus().clearNodes().unsetCode().setHeading({ level }).selectParentNode().unsetCode().run()
       }
     }
   }
 
   const checkFontStyle = () => {
-    if (editor.isActive('code')) {
-      return 'code'
-    }
-
     const active = []
+    if (editor.isActive('code')) {
+      active.push('code')
+    }
 
     if (editor.isActive('paragraph')) {
       active.push('paragraph')
