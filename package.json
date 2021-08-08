@@ -20,6 +20,7 @@
     "remark-parse": "^9.0.0",
     "remark-rehype": "^8.1.0",
     "remark-stringify": "^9.0.1",
+    "remark-unwrap-images": "^3.0.0",
     "unified": "^9.2.1",
     "yaml": "^1.10.2"
   }

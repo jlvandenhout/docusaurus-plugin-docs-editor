@@ -33,6 +33,7 @@ import htmlToMarkdown from 'rehype-remark'
 import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
 import markdownParseFrontmatter from 'remark-frontmatter'
+import markdownUnwrapImages from 'remark-unwrap-images'
 import markdownExtractFrontmatter from 'remark-extract-frontmatter'
 import markdownToHtml from 'remark-rehype'
 import unified from 'unified'
@@ -394,6 +395,7 @@ export default function Editor({ options, className }) {
     .use(markdownParse)
     .use(markdownParseFrontmatter, ['yaml'])
     .use(markdownExtractFrontmatter, { yaml: yaml.parse })
+    .use(markdownUnwrapImages)
     .use(markdownToHtml)
     .use(htmlStringify)
 
