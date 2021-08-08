@@ -30,7 +30,6 @@ import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
 import htmlStringify from 'rehype-stringify'
 import htmlParse from 'rehype-parse'
-import htmlParseCodeBlock from 'rehype-highlight'
 import htmlToMarkdown from 'rehype-remark'
 import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
@@ -43,6 +42,7 @@ import yaml from 'yaml'
 import EditorMenu from '@theme/EditorMenu'
 import EditorPage from '@theme/EditorPage'
 import EditorLogin from '@theme/EditorLogin'
+import EditorCodeBlock from '@theme/EditorCodeBlock'
 
 import 'highlight.js/styles/github.css'
 import './Editor.css'
@@ -74,7 +74,13 @@ export default function Editor({ options, className }) {
       Bold,
       BulletList,
       Code,
-      CodeBlockLowlight.configure({lowlight}),
+      CodeBlockLowlight
+        .extend({
+          addNodeView() {
+            return ReactNodeViewRenderer(EditorCodeBlock)
+          },
+        })
+        .configure({lowlight}),
       Document,
       Dropcursor,
       HardBreak,
@@ -389,7 +395,6 @@ export default function Editor({ options, className }) {
 
   const htmlToMarkdownProcessor = unified()
     .use(htmlParse)
-    .use(htmlParseCodeBlock)
     .use(htmlToMarkdown)
     .use(markdownStringify)
 
