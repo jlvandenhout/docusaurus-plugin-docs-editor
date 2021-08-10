@@ -18,6 +18,7 @@ import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
+import Image from '@tiptap/extension-image'
 import Italic from '@tiptap/extension-italic'
 import Link from '@tiptap/extension-link'
 import ListItem from '@tiptap/extension-list-item'
@@ -30,10 +31,13 @@ import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
 import htmlStringify from 'rehype-stringify'
 import htmlParse from 'rehype-parse'
+import htmlParseUrl from 'rehype-urls'
 import htmlToMarkdown from 'rehype-remark'
 import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
 import markdownParseFrontmatter from 'remark-frontmatter'
+import markdownUnwrapImages from 'remark-unwrap-images'
+import markdownAbsoluteImages from '@pondorasti/remark-img-links'
 import markdownExtractFrontmatter from 'remark-extract-frontmatter'
 import markdownToHtml from 'remark-rehype'
 import unified from 'unified'
@@ -50,8 +54,8 @@ import './Editor.css'
 
 export default function Editor({ options, className }) {
   const [contentFrontmatter, setContentFrontmatter] = useState()
-  const [contentPath, setContentPath] = useState()
   const [contentBranch, setContentBranch] = useState()
+  const [contentPath, setContentPath] = useState()
 
   const [github, setGithub] = useState()
   const [syncing, setSyncing] = useState(false)
@@ -59,9 +63,21 @@ export default function Editor({ options, className }) {
   const context = useDocusaurusContext()
   const editorBasePath = useBaseUrl(options.route || 'edit')
 
-  const docsPath = options.docs.path || 'docs'
-  const docsOwner = options.docs.owner || context.siteConfig.organizationName
-  const docsRepo = options.docs.repo || context.siteConfig.projectName
+  let docsOwner = context.siteConfig.organizationName
+  let docsRepo = context.siteConfig.projectName
+  let docsPath = 'docs'
+
+  if (options.docs) {
+    docsOwner = options.docs.owner || docsOwner
+    docsRepo = options.docs.repo || docsRepo
+    docsPath = options.docs.path || docsPath
+  }
+
+  let staticPath = 'static'
+
+  if (options.static) {
+    staticPath = options.static.path || staticPath
+  }
 
   const authorizationCodeUrl = 'https://github.com/login/oauth/authorize'
   const authorizationScope = 'public_repo'
@@ -88,6 +104,7 @@ export default function Editor({ options, className }) {
       History,
       HorizontalRule,
       Italic,
+      Image,
       Link.configure({openOnClick: false}),
       ListItem,
       OrderedList,
@@ -393,20 +410,22 @@ export default function Editor({ options, className }) {
     }
   }
 
-  const htmlToMarkdownProcessor = unified()
-    .use(htmlParse)
-    .use(htmlToMarkdown)
-    .use(markdownStringify)
+  const getContent = async (owner, repo, branch) => {
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
+    const removeImageBaseUrl = (url) => {
+      if (url.href.startsWith(staticContentBaseUrl)) {
+        const relativePath = url.href.slice(staticContentBaseUrl.length)
+        return `/${relativePath}`
+      }
+    }
 
-  const markdownToHtmlProcessor = unified()
-    .use(markdownParse)
-    .use(markdownParseFrontmatter, ['yaml'])
-    .use(markdownExtractFrontmatter, { yaml: yaml.parse })
-    .use(markdownToHtml)
-    .use(htmlStringify)
-
-  const getContent = async () => {
     const html = editor.getHTML()
+
+    const htmlToMarkdownProcessor = unified()
+      .use(htmlParse)
+      .use(htmlParseUrl, removeImageBaseUrl)
+      .use(htmlToMarkdown)
+      .use(markdownStringify)
 
     let {
       contents: markdown
@@ -420,7 +439,18 @@ export default function Editor({ options, className }) {
     return markdown
   }
 
-  const setContent = async (content) => {
+  const setContent = async (owner, repo, branch, content) => {
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
+
+    const markdownToHtmlProcessor = unified()
+      .use(markdownParse)
+      .use(markdownParseFrontmatter, ['yaml'])
+      .use(markdownExtractFrontmatter, { yaml: yaml.parse })
+      .use(markdownUnwrapImages)
+      .use(markdownAbsoluteImages, { absolutePath: staticContentBaseUrl })
+      .use(markdownToHtml)
+      .use(htmlStringify)
+
     const {
       data: frontmatter,
       contents: html,
@@ -446,13 +476,13 @@ export default function Editor({ options, className }) {
     const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
     const content = await requestContent(owner, repo, branch, contentPath)
-    await setContent(content)
+    await setContent(owner, repo, branch, content)
   }
 
   const save = async () => {
-    const content = await getContent()
     const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
+    const content = await getContent(owner, repo, branch)
     await requestCommit(owner, repo, branch, contentPath, content)
   }
 
