@@ -50,8 +50,8 @@ import './Editor.css'
 
 export default function Editor({ options, className }) {
   const [contentFrontmatter, setContentFrontmatter] = useState()
-  const [contentPath, setContentPath] = useState()
   const [contentBranch, setContentBranch] = useState()
+  const [contentPath, setContentPath] = useState()
 
   const [github, setGithub] = useState()
   const [syncing, setSyncing] = useState(false)
@@ -59,9 +59,21 @@ export default function Editor({ options, className }) {
   const context = useDocusaurusContext()
   const editorBasePath = useBaseUrl(options.route || 'edit')
 
-  const docsPath = options.docs.path || 'docs'
-  const docsOwner = options.docs.owner || context.siteConfig.organizationName
-  const docsRepo = options.docs.repo || context.siteConfig.projectName
+  let docsOwner = context.siteConfig.organizationName
+  let docsRepo = context.siteConfig.projectName
+  let docsPath = 'docs'
+
+  if (options.docs) {
+    docsOwner = options.docs.owner || docsOwner
+    docsRepo = options.docs.repo || docsRepo
+    docsPath = options.docs.path || docsPath
+  }
+
+  let staticPath = 'static'
+
+  if (options.static) {
+    staticPath = options.static.path || staticPath
+  }
 
   const authorizationCodeUrl = 'https://github.com/login/oauth/authorize'
   const authorizationScope = 'public_repo'
@@ -389,7 +401,7 @@ export default function Editor({ options, className }) {
   }
 
   const getContent = async (owner, repo, branch) => {
-    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/static/`
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
     const removeImageBaseUrl = (url) => {
       if (url.href.startsWith(staticContentBaseUrl)) {
         const relativePath = url.href.slice(staticContentBaseUrl.length)
@@ -418,7 +430,7 @@ export default function Editor({ options, className }) {
   }
 
   const setContent = async (owner, repo, branch, content) => {
-    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/static/`
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
 
     const markdownToHtmlProcessor = unified()
       .use(markdownParse)
