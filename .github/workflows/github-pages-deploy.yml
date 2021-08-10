@@ -52,11 +52,11 @@ jobs:
           git config --global user.email "jlvandenhout@gmail.com"
           git config --global user.name "Jeroen van den Hout"
           if [ -e yarn.lock ]; then
+            yarn install ./..
             yarn install --frozen-lockfile
           elif [ -e package-lock.json ]; then
             npm ci
           else
             npm i
           fi
-          npm install ./..
           npm run deploy
