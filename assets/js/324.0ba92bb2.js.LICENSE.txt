@@ -18,3 +18,5 @@
  * Copyright (c) 2014-2015, Jon Schlinkert.
  * Licensed under the MIT License.
  */
+
+/*! https://mths.be/punycode v1.3.2 by @mathias */
