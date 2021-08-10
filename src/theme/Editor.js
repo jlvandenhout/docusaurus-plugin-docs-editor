@@ -4,7 +4,13 @@ import clsx from 'clsx'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useBaseUrl from '@docusaurus/useBaseUrl'
 
-import lowlight from 'lowlight'
+import lowlight from 'lowlight/lib/core.js'
+import c from 'highlight.js/lib/languages/c.js'
+import javascript from 'highlight.js/lib/languages/javascript.js'
+import markdown from 'highlight.js/lib/languages/markdown.js'
+import python from 'highlight.js/lib/languages/python.js'
+import rust from 'highlight.js/lib/languages/rust.js'
+import shell from 'highlight.js/lib/languages/shell.js'
 
 import { useEditor, ReactNodeViewRenderer } from '@tiptap/react'
 import Blockquote from '@tiptap/extension-blockquote'
@@ -51,6 +57,12 @@ import EditorCodeBlock from '@theme/EditorCodeBlock'
 import 'highlight.js/styles/github.css'
 import './Editor.css'
 
+lowlight.registerLanguage('c', c)
+lowlight.registerLanguage('javascript', javascript)
+lowlight.registerLanguage('markdown', markdown)
+lowlight.registerLanguage('python', python)
+lowlight.registerLanguage('rust', rust)
+lowlight.registerLanguage('shell', shell)
 
 export default function Editor({ options, className }) {
   const [contentFrontmatter, setContentFrontmatter] = useState()
