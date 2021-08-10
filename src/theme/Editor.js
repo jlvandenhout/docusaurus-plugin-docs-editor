@@ -34,6 +34,7 @@ import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
 import markdownParseFrontmatter from 'remark-frontmatter'
 import markdownUnwrapImages from 'remark-unwrap-images'
+import markdownPrependImages from '@pondorasti/remark-img-links'
 import markdownExtractFrontmatter from 'remark-extract-frontmatter'
 import markdownToHtml from 'remark-rehype'
 import unified from 'unified'
@@ -391,14 +392,6 @@ export default function Editor({ options, className }) {
     .use(htmlToMarkdown)
     .use(markdownStringify)
 
-  const markdownToHtmlProcessor = unified()
-    .use(markdownParse)
-    .use(markdownParseFrontmatter, ['yaml'])
-    .use(markdownExtractFrontmatter, { yaml: yaml.parse })
-    .use(markdownUnwrapImages)
-    .use(markdownToHtml)
-    .use(htmlStringify)
-
   const getContent = async () => {
     const html = editor.getHTML()
 
@@ -414,7 +407,18 @@ export default function Editor({ options, className }) {
     return markdown
   }
 
-  const setContent = async (content) => {
+  const setContent = async (owner, repo, branch, content) => {
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/static/`
+
+    const markdownToHtmlProcessor = unified()
+      .use(markdownParse)
+      .use(markdownParseFrontmatter, ['yaml'])
+      .use(markdownExtractFrontmatter, { yaml: yaml.parse })
+      .use(markdownUnwrapImages)
+      .use(markdownPrependImages, { absolutePath: staticContentBaseUrl })
+      .use(markdownToHtml)
+      .use(htmlStringify)
+
     const {
       data: frontmatter,
       contents: html,
@@ -440,7 +444,7 @@ export default function Editor({ options, className }) {
     const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
     const content = await requestContent(owner, repo, branch, contentPath)
-    await setContent(content)
+    await setContent(owner, repo, branch, content)
   }
 
   const save = async () => {
