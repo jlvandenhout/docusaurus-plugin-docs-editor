@@ -29,12 +29,13 @@ import  { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
 
 import htmlStringify from 'rehype-stringify'
 import htmlParse from 'rehype-parse'
+import htmlParseUrl from 'rehype-urls'
 import htmlToMarkdown from 'rehype-remark'
 import markdownStringify from 'remark-stringify'
 import markdownParse from 'remark-parse'
 import markdownParseFrontmatter from 'remark-frontmatter'
 import markdownUnwrapImages from 'remark-unwrap-images'
-import markdownPrependImages from '@pondorasti/remark-img-links'
+import markdownAbsoluteImages from '@pondorasti/remark-img-links'
 import markdownExtractFrontmatter from 'remark-extract-frontmatter'
 import markdownToHtml from 'remark-rehype'
 import unified from 'unified'
@@ -387,13 +388,22 @@ export default function Editor({ options, className }) {
     }
   }
 
-  const htmlToMarkdownProcessor = unified()
-    .use(htmlParse)
-    .use(htmlToMarkdown)
-    .use(markdownStringify)
+  const getContent = async (owner, repo, branch) => {
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/static/`
+    const removeImageBaseUrl = (url) => {
+      if (url.href.startsWith(staticContentBaseUrl)) {
+        const relativePath = url.href.slice(staticContentBaseUrl.length)
+        return `/${relativePath}`
+      }
+    }
 
-  const getContent = async () => {
     const html = editor.getHTML()
+
+    const htmlToMarkdownProcessor = unified()
+      .use(htmlParse)
+      .use(htmlParseUrl, removeImageBaseUrl)
+      .use(htmlToMarkdown)
+      .use(markdownStringify)
 
     let {
       contents: markdown
@@ -415,7 +425,7 @@ export default function Editor({ options, className }) {
       .use(markdownParseFrontmatter, ['yaml'])
       .use(markdownExtractFrontmatter, { yaml: yaml.parse })
       .use(markdownUnwrapImages)
-      .use(markdownPrependImages, { absolutePath: staticContentBaseUrl })
+      .use(markdownAbsoluteImages, { absolutePath: staticContentBaseUrl })
       .use(markdownToHtml)
       .use(htmlStringify)
 
@@ -448,9 +458,9 @@ export default function Editor({ options, className }) {
   }
 
   const save = async () => {
-    const content = await getContent()
     const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
+    const content = await getContent(owner, repo, branch)
     await requestCommit(owner, repo, branch, contentPath, content)
   }
 

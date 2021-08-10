@@ -261,7 +261,7 @@ hast-util-from-parse5@^6.0.0:
     vfile-location "^3.2.0"
     web-namespaces "^1.0.0"
 
-hast-util-has-property@^1.0.0:
+hast-util-has-property@^1.0.0, hast-util-has-property@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/hast-util-has-property/-/hast-util-has-property-1.0.4.tgz#9f137565fad6082524b382c1e7d7d33ca5059f36"
   integrity sha512-ghHup2voGfgFoHMGnaLHOjbYFACKrRh9KFttdCzMCbFoBMJXiNi2+XTrPP8+q6cDJM/RSqlCfVWrjp1H201rZg==
@@ -357,6 +357,11 @@ is-alphanumerical@^1.0.0:
   dependencies:
     is-alphabetical "^1.0.0"
     is-decimal "^1.0.0"
+
+is-arrayish@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.3.2.tgz#4574a2ae56f7ab206896fb431eaeed066fdf8f03"
+  integrity sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ==
 
 is-buffer@^2.0.0:
   version "2.0.5"
@@ -593,6 +598,15 @@ rehype-stringify@^8.0.0:
   dependencies:
     hast-util-to-html "^7.1.1"
 
+rehype-urls@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/rehype-urls/-/rehype-urls-1.1.1.tgz#4a0aed7cc8740ace03a5a323dd50596d272f9fdf"
+  integrity sha512-ct9Kb/nAL6oe/O5fDc0xjiqm8Z9xgXdorOdDhZAWx7awucyiuYXU7Dax+23Gu24nnGwtdaCW6zslKAYzlEW1lw==
+  dependencies:
+    hast-util-has-property "^1.0.2"
+    stdopt "^2.0.0"
+    unist-util-visit "^1.4.0"
+
 remark-extract-frontmatter@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/remark-extract-frontmatter/-/remark-extract-frontmatter-3.1.0.tgz#8ac209bf5e7377578ebfd6dc3504e9fccabea112"
@@ -646,6 +660,13 @@ space-separated-tokens@^1.0.0:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/space-separated-tokens/-/space-separated-tokens-1.1.5.tgz#85f32c3d10d9682007e917414ddc5c26d1aa6899"
   integrity sha512-q/JSVd1Lptzhf5bkYm4ob4iWPjx0KiRe3sRFBNrVqbJkFaBm5vbbowy1mymoPNLRa52+oadOhJ+K49wsSeSjTA==
+
+stdopt@^2.0.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/stdopt/-/stdopt-2.2.0.tgz#2ecadb59b9f13babf4b2b9ca9a494d85009ea142"
+  integrity sha512-D/p41NgXOkcj1SeGhfXOwv9z1K6EV3sjAUY5aeepVbgEHv7DpKWLTjhjScyzMWAQCAgUQys1mjH0eArm4cjRGw==
+  dependencies:
+    is-arrayish "^0.3.2"
 
 stringify-entities@^3.0.1:
   version "3.1.0"
@@ -781,6 +802,13 @@ unist-util-visit@1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/unist-util-visit/-/unist-util-visit-1.4.0.tgz#1cb763647186dc26f5e1df5db6bd1e48b3cc2fb1"
   integrity sha512-FiGu34ziNsZA3ZUteZxSFaczIjGmksfSgdKqBfOejrrfzyUy5b7YrlzT1Bcvi+djkYDituJDy2XB7tGTeBieKw==
+  dependencies:
+    unist-util-visit-parents "^2.0.0"
+
+unist-util-visit@^1.4.0:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/unist-util-visit/-/unist-util-visit-1.4.1.tgz#4724aaa8486e6ee6e26d7ff3c8685960d560b1e3"
+  integrity sha512-AvGNk7Bb//EmJZyhtRUnNMEpId/AZ5Ph/KUpTI09WHQuDZHKovQ1oEv3mfmKpWKtoMzyMC4GLBm1Zy5k12fjIw==
   dependencies:
     unist-util-visit-parents "^2.0.0"
 
