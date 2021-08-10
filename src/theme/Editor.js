@@ -455,7 +455,7 @@ export default function Editor({ options, className }) {
       data: frontmatter,
       contents: html,
     } = await markdownToHtmlProcessor.process(content)
-    console.log(html)
+
     setContentFrontmatter(frontmatter)
     editor.chain().setContent(html).focus('start').run()
   }
