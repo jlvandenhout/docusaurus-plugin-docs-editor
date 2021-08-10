@@ -58,4 +58,5 @@ jobs:
           else
             npm i
           fi
+          npm install jlvandenhout/docusaurus-plugin-docs-editor
           npm run deploy
