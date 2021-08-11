@@ -39,7 +39,7 @@
   background-color: var(--ifm-color-gray-900);
 }
 
-.editor__icon {
+.editor__control {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -77,6 +77,12 @@
   background-color: var(--ifm-color-gray-800);
 }
 
+.editor__icon {
+  font-family: 'Material Icons';
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
 @keyframes spin {
   from {
       transform:rotate(0deg);
@@ -91,11 +97,11 @@
   animation: spin 2s linear infinite;
 }
 
-.editor__icon:hover {
+.editor__control:hover {
   background-color: var(--ifm-color-gray-600);
 }
 
-.editor__icon--active {
+.editor__control--active {
   color: var(--ifm-color-gray-200);
   background-color: var(--ifm-color-gray-700);
 }

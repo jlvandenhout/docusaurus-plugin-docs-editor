@@ -15,17 +15,17 @@ const EditorGroup = ({children}) => {
 }
 
 
-const EditorIcon = ({ editor, name, action, children }) => {
+const EditorControl = ({ editor, name, action, children }) => {
   return (
     <button
       className={clsx(
-        'editor__icon',
+        'editor__control',
         'margin-horiz--xs',
-        name && editor.isActive(name) && 'editor__icon--active',
+        name && editor.isActive(name) && 'editor__control--active',
       )}
       onClick={action}
     >
-      <span className='material-icons'>{children}</span>
+      <span className='editor__icon'>{children}</span>
     </button>
   )
 }
@@ -108,12 +108,12 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
       <div className={clsx('editor__menu', className)}>
         <div className={clsx('editor__submenu')}>
           <EditorGroup>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().undo().run()}>
+            <EditorControl editor={editor} action={() => editor.chain().focus().undo().run()}>
               undo
-            </EditorIcon>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().redo().run()}>
+            </EditorControl>
+            <EditorControl editor={editor} action={() => editor.chain().focus().redo().run()}>
               redo
-            </EditorIcon>
+            </EditorControl>
           </EditorGroup>
           <EditorGroup>
             <select
@@ -130,56 +130,56 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
             </select>
           </EditorGroup>
           <EditorGroup>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBold().run()} name='bold'>
+            <EditorControl editor={editor} action={() => editor.chain().focus().toggleBold().run()} name='bold'>
               format_bold
-            </EditorIcon>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().toggleItalic().run()} name='italic'>
+            </EditorControl>
+            <EditorControl editor={editor} action={() => editor.chain().focus().toggleItalic().run()} name='italic'>
               format_italic
-            </EditorIcon>
-            <EditorIcon editor={editor} action={toggleLink} name='link'>
+            </EditorControl>
+            <EditorControl editor={editor} action={toggleLink} name='link'>
               link
-            </EditorIcon>
+            </EditorControl>
           </EditorGroup>
           <EditorGroup>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBulletList().run()} name='bulletList'>
+            <EditorControl editor={editor} action={() => editor.chain().focus().toggleBulletList().run()} name='bulletList'>
               format_list_bulleted
-            </EditorIcon>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().toggleOrderedList().run()} name='orderedList'>
+            </EditorControl>
+            <EditorControl editor={editor} action={() => editor.chain().focus().toggleOrderedList().run()} name='orderedList'>
               format_list_numbered
-            </EditorIcon>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().toggleCodeBlock().run()} name='codeBlock'>
+            </EditorControl>
+            <EditorControl editor={editor} action={() => editor.chain().focus().toggleCodeBlock().run()} name='codeBlock'>
               code
-            </EditorIcon>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().toggleBlockquote().run()} name='blockquote'>
+            </EditorControl>
+            <EditorControl editor={editor} action={() => editor.chain().focus().toggleBlockquote().run()} name='blockquote'>
               format_quote
-            </EditorIcon>
+            </EditorControl>
           </EditorGroup>
           <EditorGroup>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().setHorizontalRule().run()}>
+            <EditorControl editor={editor} action={() => editor.chain().focus().setHorizontalRule().run()}>
               horizontal_rule
-            </EditorIcon>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().setHardBreak().run()}>
+            </EditorControl>
+            <EditorControl editor={editor} action={() => editor.chain().focus().setHardBreak().run()}>
               keyboard_return
-            </EditorIcon>
+            </EditorControl>
           </EditorGroup>
           <EditorGroup>
-            <EditorIcon editor={editor} action={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>
+            <EditorControl editor={editor} action={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}>
               format_clear
-            </EditorIcon>
+            </EditorControl>
           </EditorGroup>
         </div>
         <div className={clsx('editor__submenu')}>
           <EditorGroup>
             <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSave}>
               {syncing ?
-                <span className='editor__loading material-icons'>autorenew</span>
+                <span className='editor__loading editor__icon'>autorenew</span>
               :
-                <span className='material-icons'>file_download</span>
+                <span className='editor__icon'>file_download</span>
               }
               Save
             </button>
             <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSubmit}>
-              <span className='material-icons'>file_upload</span> Submit
+              <span className='editor__icon'>file_upload</span> Submit
             </button>
           </EditorGroup>
         </div>
