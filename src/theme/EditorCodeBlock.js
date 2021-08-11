@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { NodeViewWrapper, NodeViewContent } from '@tiptap/react'
 
+import clsx from 'clsx'
+
 export default ({ node: { attrs: { language: defaultLanguage } }, updateAttributes, extension }) => {
   const [language, setLanguage] = useState(defaultLanguage)
 
@@ -24,7 +26,10 @@ export default ({ node: { attrs: { language: defaultLanguage } }, updateAttribut
         ))}
       </select>
       <pre>
-        <NodeViewContent as='code' className={language ? `language-${language}` : ''} />
+        <NodeViewContent as='code' className={clsx(
+          'codeblock__code',
+          language ? `language-${language}` : ''
+        )} />
       </pre>
     </NodeViewWrapper>
   )

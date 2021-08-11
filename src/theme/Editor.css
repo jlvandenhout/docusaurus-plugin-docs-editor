@@ -120,5 +120,13 @@
 
 .codeblock__language {
   background-color: var(--ifm-color-gray-200);
+  height: 2rem;
+  width: 100%;
+  padding-left: var(--ifm-pre-padding);
   border: 0;
+  border-radius: var(--ifm-global-radius) var(--ifm-global-radius) 0 0;
+
+  font-family: var(--ifm-font-family-base);
+  font-size: var(--ifm-code-font-size);
+  font-weight: 500;
 }
