@@ -113,12 +113,12 @@
   background-color: var(--ifm-color-gray-0);
 }
 
-.editor__codeblock {
+.codeblock {
   background-color: var(--ifm-color-gray-100);
   border-radius: var(--ifm-global-radius);
 }
 
-.editor__language-selector {
-  background-color: var(--ifm-color-gray-100);
+.codeblock__language {
+  background-color: var(--ifm-color-gray-200);
   border: 0;
 }
