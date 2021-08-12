@@ -79,20 +79,44 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
 
   const toggleLink = () => {
     if (editor.isActive('link')) {
-      editor
-        .chain()
-        .focus()
-        .unsetLink()
-        .run()
-    } else {
-      const url = window.prompt('URL')
+      const state = editor.state
 
-      editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
+      const { from, to } = state.selection
+      let marks = []
+      state.doc.nodesBetween(from, to, (node) => {
+        marks = [...marks, ...node.marks]
+      })
+
+      const mark = marks.find((markItem) => markItem.type.name === 'link')
+
+      let url = (mark && mark.attrs.href) ? mark.attrs.href : ''
+      url = window.prompt('Update or remove the URL', url)
+
+      if (url) {
+        editor
+          .chain()
+          .focus()
+          .extendMarkRange('link')
+          .setLink({ href: url })
+          .run()
+      } else {
+        editor
+          .chain()
+          .focus()
+          .unsetLink()
+          .run()
+      }
+    } else {
+      const url = window.prompt('Add a URL')
+
+      if (url) {
+        editor
+          .chain()
+          .focus()
+          .extendMarkRange('link')
+          .setLink({ href: url })
+          .run()
+      }
     }
   }
 
