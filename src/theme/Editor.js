@@ -345,7 +345,7 @@ export default function Editor({ options, className }) {
 
     const contentData = btoa(content)
 
-    if (contentData.trim() !== remoteContentData.trim()) {
+    if (contentData.replace(/\s/g, '') !== contentData.replace(/\s/g, '')) {
       setSyncing(true)
       setAnnouncement('Saving changes...')
       await github.api.repos.createOrUpdateFileContents({
@@ -408,6 +408,7 @@ export default function Editor({ options, className }) {
 
     // TODO: Allow user to update existing pull requests
     if (!pulls.length) {
+      setAnnouncement('Submitting changes...')
       const {
         data: {
           default_branch: contentDefaultBranch,
@@ -425,6 +426,9 @@ export default function Editor({ options, className }) {
         head,
         title: `Edit ${contentPath}`
       })
+      setAnnouncement('Changes submitted')
+    } else {
+      setAnnouncement('Changes submitted')
     }
   }
 
@@ -513,7 +517,9 @@ export default function Editor({ options, className }) {
   }
 
   useEffect(() => {
+    setAnnouncement('Getting ready...')
     init()
+    setAnnouncement('Ready to edit')
   }, [])
 
   useEffect(() => {
@@ -526,7 +532,7 @@ export default function Editor({ options, className }) {
     <>
       {github ?
         <div className={clsx('editor', className)}>
-          <div className='editor__announcements'>{announcement}</div>
+          <div className='editor__announcements padding-horiz--md padding-vert--xs'>{announcement}</div>
           <EditorMenu editor={editor} save={save} submit={submit} syncing={syncing} />
           <EditorPage editor={editor} />
         </div>

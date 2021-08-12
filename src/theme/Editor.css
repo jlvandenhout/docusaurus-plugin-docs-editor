@@ -11,6 +11,7 @@
   flex-wrap: wrap;
   color: var(--ifm-color-gray-200);
   background-color: var(--ifm-color-gray-900);
+  border-top: 1px solid var(--ifm-color-gray-800);
 }
 
 .editor__submenu {
@@ -136,4 +137,11 @@
   font-family: var(--ifm-font-family-base);
   font-size: var(--ifm-code-font-size);
   font-weight: 500;
+}
+
+.editor__announcements {
+  font-size: 70%;
+  font-weight: 600;
+  color: var(--ifm-color-gray-600);
+  background-color: var(--ifm-color-gray-900);
 }
