@@ -65,6 +65,8 @@ lowlight.registerLanguage('rust', rust)
 lowlight.registerLanguage('shell', shell)
 
 export default function Editor({ options, className }) {
+  const [announcement, setAnnouncement] = useState('')
+
   const [contentFrontmatter, setContentFrontmatter] = useState()
   const [contentBranch, setContentBranch] = useState()
   const [contentPath, setContentPath] = useState()
@@ -345,6 +347,7 @@ export default function Editor({ options, className }) {
 
     if (contentData.trim() !== remoteContentData.trim()) {
       setSyncing(true)
+      setAnnouncement('Saving changes...')
       await github.api.repos.createOrUpdateFileContents({
         owner,
         repo,
@@ -355,6 +358,7 @@ export default function Editor({ options, className }) {
         message: `Edit ${contentPath}`,
       })
 
+      setAnnouncement('Changes have been saved, syncing with GitHub...')
       await new Promise((resolve, reject) => {
         const interval = setInterval(() => {
           github.api.repos.getContent({
@@ -374,12 +378,14 @@ export default function Editor({ options, className }) {
               // Remote file is updated
               clearInterval(interval)
               setSyncing(false)
+              setAnnouncement('Changes have been saved')
               resolve()
             }
           })
           .catch(error => {
             if (error.status !== 404) {
               setSyncing(false)
+              setAnnouncement('An error occured during sync')
               reject(error)
             }
           })
@@ -520,6 +526,7 @@ export default function Editor({ options, className }) {
     <>
       {github ?
         <div className={clsx('editor', className)}>
+          <div className='editor__announcements'>{announcement}</div>
           <EditorMenu editor={editor} save={save} submit={submit} syncing={syncing} />
           <EditorPage editor={editor} />
         </div>
