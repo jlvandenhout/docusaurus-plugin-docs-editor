@@ -66,6 +66,7 @@ lowlight.registerLanguage('shell', shell)
 
 export default function Editor({ options, className }) {
   const [announcement, setAnnouncement] = useState('')
+  const [pullrequest, setPullrequest] = useState('')
 
   const [contentFrontmatter, setContentFrontmatter] = useState()
   const [contentBranch, setContentBranch] = useState()
@@ -407,7 +408,10 @@ export default function Editor({ options, className }) {
     })
 
     // TODO: Allow user to update existing pull requests
-    if (!pulls.length) {
+    if (pulls.length) {
+      setPullrequest(pulls[0].html_url)
+      setAnnouncement('Changes already submitted')
+    } else {
       setAnnouncement('Submitting changes...')
       const {
         data: {
@@ -419,15 +423,18 @@ export default function Editor({ options, className }) {
       })
 
       // TODO: Allow user to write a pull request title and description
-      await github.api.pulls.create({
+      const {
+        data: {
+          html_url
+        }
+      } = await github.api.pulls.create({
         owner: docsOwner,
         repo: docsRepo,
         base: contentDefaultBranch,
         head,
         title: `Edit ${contentPath}`
       })
-      setAnnouncement('Changes submitted')
-    } else {
+      setPullrequest(url)
       setAnnouncement('Changes submitted')
     }
   }
@@ -533,7 +540,7 @@ export default function Editor({ options, className }) {
       {github ?
         <div className={clsx('editor', className)}>
           <div className='editor__announcements padding-horiz--md padding-vert--xs'>{announcement}</div>
-          <EditorMenu editor={editor} save={save} submit={submit} syncing={syncing} />
+          <EditorMenu editor={editor} save={save} submit={submit} syncing={syncing}  pullrequest={pullrequest} />
           <EditorPage editor={editor} />
         </div>
       :

@@ -31,7 +31,7 @@ const EditorControl = ({ editor, name, action, children }) => {
 }
 
 
-export default function EditorMenu({ editor, save, submit, syncing, className }) {
+export default function EditorMenu({ editor, save, submit, syncing, pullrequest, className }) {
   const changeFontStyle = (event) => {
     event.preventDefault()
 
@@ -195,16 +195,19 @@ export default function EditorMenu({ editor, save, submit, syncing, className })
         <div className={clsx('editor__submenu')}>
           <EditorGroup>
             <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSave}>
-              {syncing ?
-                <span className='editor__loading editor__icon'>autorenew</span>
-              :
-                <span className='editor__icon'>file_download</span>
-              }
-              Save
+              <span className='editor__icon'>file_download</span> Save
             </button>
-            <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSubmit}>
-              <span className='editor__icon'>file_upload</span> Submit
-            </button>
+            {pullrequest ?
+              <a href={pullrequest} target='_blank'>
+                <button className='editor__button margin-horiz--xs padding-horiz--sm'>
+                  View submit
+                </button>
+              </a>
+            :
+              <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSubmit}>
+                <span className='editor__icon'>file_upload</span> Submit
+              </button>
+            }
           </EditorGroup>
         </div>
       </div>
