@@ -126,6 +126,7 @@
 
 .codeblock__language {
   background-color: var(--ifm-color-gray-200);
+  cursor: pointer;
   height: 2rem;
   width: 100%;
   padding-left: var(--ifm-pre-padding);
