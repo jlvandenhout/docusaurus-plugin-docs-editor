@@ -194,18 +194,16 @@ export default function EditorMenu({ editor, save, submit, syncing, pullrequest,
         </div>
         <div className={clsx('editor__submenu')}>
           <EditorGroup>
-            <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSave}>
-              <span className='editor__icon'>file_download</span> Save
+            <button className='button button--sm button--primary margin-horiz--xs' disabled={syncing} onClick={onSave}>
+              Save
             </button>
             {pullrequest ?
-              <a href={pullrequest} target='_blank'>
-                <button className='editor__button margin-horiz--xs padding-horiz--sm'>
-                  View submit
-                </button>
+              <a className='button button--sm button--outline button--primary margin-horiz--xs' href={pullrequest} target='_blank'>
+                Review
               </a>
             :
-              <button className='editor__button margin-horiz--xs padding-horiz--sm' disabled={syncing} onClick={onSubmit}>
-                <span className='editor__icon'>file_upload</span> Submit
+              <button className='button button--sm button--primary margin-horiz--xs' disabled={syncing} onClick={onSubmit}>
+                Submit
               </button>
             }
           </EditorGroup>
