@@ -104,7 +104,7 @@ export default function Editor({ options, className }) {
   }
 
   const authorizationMethod = options.github.method ? options.github.method.toUpperCase() : 'GET'
-  if (!['GET', 'POST'].contains(authorizationMethod)) {
+  if (!['GET', 'POST'].includes(authorizationMethod)) {
     throw 'Authorization request method must be GET or POST.'
   }
 
