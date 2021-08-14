@@ -1,12 +1,12 @@
 import React from 'react';
 import { useLocation } from '@docusaurus/router'
 import useBaseUrl from '@docusaurus/useBaseUrl'
-import { usePluginData } from '@docusaurus/useGlobalData';
-import Head from '@docusaurus/Head'
+import { usePluginData } from '@docusaurus/useGlobalData'
+import Translate from '@docusaurus/Translate'
 import { useActivePlugin } from '@theme/hooks/useDocs'
 
 
-export default function EditThisPage() {
+export default function EditThisPage({editUrl}) {
   const { pathname } = useLocation()
   const activePlugin = useActivePlugin()
   const editorOptions = usePluginData('docusaurus-plugin-docs-editor')
@@ -23,14 +23,21 @@ export default function EditThisPage() {
 
   return (
     <>
-      <Head>
-        <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'></link>
-      </Head>
       { docPath &&
-        <a href={useBaseUrl(docPath)} target="_blank" rel="noreferrer noopener">
-          <span className='material-icons'>edit</span>
-        </a>
+        <>
+          <a href={useBaseUrl(docPath)} target="_blank" rel="noreferrer noopener">
+            Open in editor
+          </a>
+          <span className='margin-horiz--sm'>|</span>
+        </>
       }
+      <a href={editUrl} target="_blank" rel="noreferrer noopener">
+        <Translate
+          id="theme.common.editThisPage"
+          description="The link label to edit the current page">
+          Open on GitHub
+        </Translate>
+      </a>
     </>
   );
 }
