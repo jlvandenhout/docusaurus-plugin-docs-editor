@@ -99,7 +99,7 @@ export default function Editor({ options, className }) {
   const authorizationClientId = options.github.clientId
 
   let authorizationTokenUrl = options.github.tokenUrl
-  if (!authorizationTokenUrl.endsWith('/')) {
+  if (authorizationTokenUrl && !authorizationTokenUrl.endsWith('/')) {
     authorizationTokenUrl += '/'
   }
 
