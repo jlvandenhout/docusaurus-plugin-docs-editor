@@ -96,9 +96,17 @@ export default function Editor({ options, className }) {
 
   const authorizationCodeUrl = 'https://github.com/login/oauth/authorize'
   const authorizationScope = 'public_repo'
-  const authorizationMethod = options.github.method.toUpperCase()
   const authorizationClientId = options.github.clientId
-  const authorizationTokenUrl = options.github.tokenUrl
+
+  let authorizationTokenUrl = options.github.tokenUrl
+  if (!authorizationTokenUrl.endsWith('/')) {
+    authorizationTokenUrl = `${authorizationTokenUrl}/`
+  }
+
+  let authorizationMethod = options.github.method.toUpperCase()
+  if (!['GET', 'POST'].contains(authorizationMethod)) {
+    throw 'Authorization request method must be GET or POST.'
+  }
 
   const editor = useEditor({
     extensions: [
@@ -160,7 +168,7 @@ export default function Editor({ options, className }) {
         .then(response = response.json())
         .then(data => data.token)
     } else {
-      throw('Invalid method')
+      throw 'Authorization request method must be GET or POST.'
     }
   }
 
