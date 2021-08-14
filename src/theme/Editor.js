@@ -96,6 +96,7 @@ export default function Editor({ options, className }) {
 
   const authorizationCodeUrl = 'https://github.com/login/oauth/authorize'
   const authorizationScope = 'public_repo'
+  const authorizationMethod = options.github.method.toUpperCase()
   const authorizationClientId = options.github.clientId
   const authorizationTokenUrl = options.github.tokenUrl
 
@@ -141,13 +142,26 @@ export default function Editor({ options, className }) {
   }
 
   const requestAuthorizationToken = async (code) => {
-    const url = new URL(code, authorizationTokenUrl)
+    if (authorizationMethod === 'GET') {
+      const url = new URL(code, authorizationTokenUrl)
 
-    const token = await fetch(url)
-      .then(response => response.json())
-      .then(data => data.token)
-
-    return token
+      return await fetch(url)
+        .then(response => response.json())
+        .then(data => data.token)
+    } else if (authorizationMethod === 'POST') {
+      return await fetch(authorizationTokenUrl, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({ code })
+      })
+        .then(response = response.json())
+        .then(data => data.token)
+    } else {
+      throw('Invalid method')
+    }
   }
 
   const requestAuthorization = async () => {
@@ -158,7 +172,7 @@ export default function Editor({ options, className }) {
 
     if (code) {
       window.history.replaceState(window.history.state, '', url)
-      const token = await requestAuthorizationToken(code, url)
+      const token = await requestAuthorizationToken(code)
 
       const OctokitRest = Octokit.plugin(restEndpointMethods)
       const {
