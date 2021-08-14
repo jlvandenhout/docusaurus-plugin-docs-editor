@@ -43,6 +43,8 @@ module.exports = {
           clientId: '',
           // REQUIRED - The plugin will append the authorization code to this URL
           tokenUrl: '',
+          // The request method to use (GET or POST), defaults to GET
+          method: '',
         },
       }
     ]

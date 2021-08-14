@@ -103,7 +103,7 @@ export default function Editor({ options, className }) {
     authorizationTokenUrl = `${authorizationTokenUrl}/`
   }
 
-  let authorizationMethod = options.github.method.toUpperCase()
+  let authorizationMethod = options.github.method ? options.github.method.toUpperCase() : 'GET'
   if (!['GET', 'POST'].contains(authorizationMethod)) {
     throw 'Authorization request method must be GET or POST.'
   }
