@@ -165,7 +165,7 @@ export default function Editor({ options, className }) {
         },
         body: JSON.stringify({ code })
       })
-        .then(response = response.json())
+        .then(response => response.json())
         .then(data => data.token)
     } else {
       throw 'Authorization request method must be GET or POST.'
