@@ -1,6 +1,6 @@
 {
   "name": "@jlvandenhout/docusaurus-plugin-docs-editor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A WYSIWYG editor for your documents",
   "main": "src/index.js",
   "repository": "https://github.com/jlvandenhout/docusaurus-plugin-docs-editor",
