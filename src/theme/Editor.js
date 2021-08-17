@@ -368,7 +368,7 @@ export default function Editor({ options, className }) {
 
     const contentData = btoa(content)
 
-    if (contentData.replace(/\s/g, '') !== contentData.replace(/\s/g, '')) {
+    if (contentData.replace(/\s/g, '') !== remoteContentData.replace(/\s/g, '')) {
       setSyncing(true)
       setAnnouncement('Saving changes...')
       await github.api.repos.createOrUpdateFileContents({
