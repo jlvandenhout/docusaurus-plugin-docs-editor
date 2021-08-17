@@ -456,7 +456,7 @@ export default function Editor({ options, className }) {
         head,
         title: `Edit ${contentPath}`
       })
-      setPullrequest(url)
+      setPullrequest(html_url)
       setAnnouncement('Changes submitted')
     }
   }
