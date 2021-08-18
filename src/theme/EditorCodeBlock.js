@@ -25,11 +25,8 @@ export default ({ node: { attrs: { language: defaultLanguage } }, updateAttribut
           <option key={index} value={lang}>{lang}</option>
         ))}
       </select>
-      <pre>
-        <NodeViewContent as='code' className={clsx(
-          'codeblock__code',
-          language ? `language-${language}` : ''
-        )} />
+      <pre className='codeblock__code'>
+        <NodeViewContent as='code' className={clsx(language ? `language-${language}` : '')} />
       </pre>
     </NodeViewWrapper>
   )
