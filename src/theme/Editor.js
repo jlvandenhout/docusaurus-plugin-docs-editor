@@ -546,6 +546,7 @@ export default function Editor({ options, className }) {
   }
 
   useEffect(() => {
+    document.documentElement.dataset.theme = 'light'
     setAnnouncement('Getting ready...')
     init()
     setAnnouncement('Ready to edit')

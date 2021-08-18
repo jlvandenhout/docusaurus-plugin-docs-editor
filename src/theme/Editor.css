@@ -1,4 +1,5 @@
 .editor {
+  --ifm-color-scheme: light;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -120,11 +121,6 @@
   font-family: var(--ifm-font-family-base);
   font-size: var(--ifm-code-font-size);
   font-weight: 500;
-}
-
-.codeblock__code, code {
-  background-color: var(--ifm-color-gray-100);
-  border-color: var(--ifm-color-gray-100);
 }
 
 .editor__announcements {
