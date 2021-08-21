@@ -476,7 +476,11 @@ export default function Editor({ options, className }) {
       .use(htmlParse)
       .use(htmlParseUrl, removeImageBaseUrl)
       .use(htmlToMarkdown)
-      .use(markdownStringify)
+      .use(markdownStringify, {
+        bullet: '-',
+        rule: '-',
+        listItemIndent: 'mixed'
+      })
 
     let {
       contents: markdown
