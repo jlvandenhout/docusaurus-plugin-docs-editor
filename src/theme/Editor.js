@@ -514,7 +514,9 @@ export default function Editor({ options, className }) {
   const init = async () => {
     const github = await requestAuthorization()
 
-    const filePath = window.location.pathname.slice(editorBasePath.length)
+    const filePath = window.location.pathname
+      .slice(editorBasePath.length)
+      .replace(/\/$/, '')
     const contentPath = `${docsPath}${filePath}`
     const contentBranch = `edit/${contentPath.replaceAll(/[\/\.]/g, '-')}`
 
