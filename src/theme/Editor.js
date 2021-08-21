@@ -514,10 +514,11 @@ export default function Editor({ options, className }) {
   const init = async () => {
     const github = await requestAuthorization()
 
-    const filePath = window.location.pathname
+    let filePath = window.location.pathname
       .slice(editorBasePath.length)
       .replace(/\/$/, '')
-    const contentPath = `${docsPath}${filePath}`
+
+    const contentPath = `${docsPath}${filePath}.md`
     const contentBranch = `edit/${contentPath.replaceAll(/[\/\.]/g, '-')}`
 
     setGithub(github)
