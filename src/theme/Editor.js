@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
+import base64 from 'base-64'
+import utf8 from 'utf8'
+
 import clsx from 'clsx'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useBaseUrl from '@docusaurus/useBaseUrl'
@@ -355,7 +358,7 @@ export default function Editor({ options, className }) {
       ref: `refs/heads/${branch}`
     })
 
-    const markdown = atob(data)
+    const markdown = utf8.decode(base64.decode(data))
 
     const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
     const markdownToHtmlProcessor = unified()
@@ -407,7 +410,7 @@ export default function Editor({ options, className }) {
       markdown = `---\n${frontmatter}---\n\n${markdown}`
     }
 
-    const data = btoa(markdown)
+    const data = base64.encode(utf8.encode(markdown))
 
     setSyncing(true)
     const {
