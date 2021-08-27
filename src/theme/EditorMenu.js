@@ -31,7 +31,7 @@ const EditorControl = ({ editor, name, action, children }) => {
 }
 
 
-export default function EditorMenu({ editor, save, submit, syncing, pullrequest, className }) {
+export default function EditorMenu({ editor, save, submit, dirty, syncing, pullrequest, className }) {
   const changeFontStyle = (event) => {
     event.preventDefault()
 
@@ -194,7 +194,7 @@ export default function EditorMenu({ editor, save, submit, syncing, pullrequest,
         </div>
         <div className={clsx('editor__submenu')}>
           <EditorGroup>
-            <button className='button button--sm button--primary margin-horiz--xs' disabled={syncing} onClick={onSave}>
+            <button className='button button--sm button--primary margin-horiz--xs' disabled={syncing || !dirty} onClick={onSave}>
               Save
             </button>
             {pullrequest ?

@@ -74,6 +74,9 @@ export default function Editor({ options, className }) {
 
   const [github, setGithub] = useState()
   const [syncing, setSyncing] = useState(false)
+  const [savedContent, setSavedContent] = useState('')
+  const [currentContent, setCurrentContent] = useState('')
+  const [dirty, setDirty] = useState(false)
 
   const context = useDocusaurusContext()
   const editorBasePath = useBaseUrl(options.route || 'edit')
@@ -136,6 +139,9 @@ export default function Editor({ options, className }) {
       Text,
     ],
     autofocus: 'start',
+    onUpdate({ editor }) {
+      setCurrentContent(editor.getHTML())
+    }
   })
 
   const requestAuthorizationCode = (redirectUrl) => {
@@ -356,8 +362,7 @@ export default function Editor({ options, className }) {
   const requestCommit = async (owner, repo, branch, path, content) => {
     const {
       data: {
-        sha,
-        content: remoteContentData,
+        sha
       }
     } = await github.api.repos.getContent({
       owner,
@@ -368,53 +373,51 @@ export default function Editor({ options, className }) {
 
     const contentData = btoa(content)
 
-    if (contentData.replace(/\s/g, '') !== remoteContentData.replace(/\s/g, '')) {
-      setSyncing(true)
-      setAnnouncement('Saving changes...')
-      await github.api.repos.createOrUpdateFileContents({
-        owner,
-        repo,
-        branch,
-        path,
-        sha,
-        content: contentData,
-        message: `Edit ${contentPath}`,
-      })
+    setSyncing(true)
+    setAnnouncement('Saving changes...')
+    await github.api.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      branch,
+      path,
+      sha,
+      content: contentData,
+      message: `Edit ${contentPath}`,
+    })
 
-      setAnnouncement('Changes have been saved, syncing with GitHub...')
-      await new Promise((resolve, reject) => {
-        const interval = setInterval(() => {
-          github.api.repos.getContent({
-            owner,
-            repo,
-            path,
-            ref: `refs/heads/${branch}`
-          })
-          .then(data => {
-            const {
-              data: {
-                sha: remoteSha,
-              }
-            } = data
+    setAnnouncement('Changes have been saved, syncing with GitHub...')
+    await new Promise((resolve, reject) => {
+      const interval = setInterval(() => {
+        github.api.repos.getContent({
+          owner,
+          repo,
+          path,
+          ref: `refs/heads/${branch}`
+        })
+        .then(data => {
+          const {
+            data: {
+              sha: remoteSha,
+            }
+          } = data
 
-            if (remoteSha != sha) {
-              // Remote file is updated
-              clearInterval(interval)
-              setSyncing(false)
-              setAnnouncement('Changes have been saved')
-              resolve()
-            }
-          })
-          .catch(error => {
-            if (error.status !== 404) {
-              setSyncing(false)
-              setAnnouncement('An error occured during sync')
-              reject(error)
-            }
-          })
-        }, 1000)
-      })
-    }
+          if (remoteSha != sha) {
+            // Remote file is updated
+            clearInterval(interval)
+            setSyncing(false)
+            setAnnouncement('Changes have been saved')
+            resolve()
+          }
+        })
+        .catch(error => {
+          if (error.status !== 404) {
+            setSyncing(false)
+            setAnnouncement('An error occured during sync')
+            reject(error)
+          }
+        })
+      }, 1000)
+    })
   }
 
   const requestPull = async (owner, branch) => {
@@ -535,20 +538,28 @@ export default function Editor({ options, className }) {
     const branch = await requestBranch(owner, repo, contentBranch)
     const content = await requestContent(owner, repo, branch, contentPath)
     await setContent(owner, repo, branch, content)
+    setSavedContent(editor.getHTML())
+    setCurrentContent(editor.getHTML())
   }
 
   const save = async () => {
-    const {owner, repo} = await requestRepo(github.user, docsRepo)
-    const branch = await requestBranch(owner, repo, contentBranch)
-    const content = await getContent(owner, repo, branch)
-    await requestCommit(owner, repo, branch, contentPath, content)
+    if (dirty) {
+      const {owner, repo} = await requestRepo(github.user, docsRepo)
+      const branch = await requestBranch(owner, repo, contentBranch)
+      const content = await getContent(owner, repo, branch)
+      setSavedContent(editor.getHTML())
+      await requestCommit(owner, repo, branch, contentPath, content)
+    }
   }
 
   const submit = async () => {
-    const content = await getContent()
     const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
-    await requestCommit(owner, repo, branch, contentPath, content)
+    if (dirty) {
+      setSavedContent(editor.getHTML())
+      const content = await getContent(owner, repo, branch)
+      await requestCommit(owner, repo, branch, contentPath, content)
+    }
     await requestPull(owner, branch)
   }
 
@@ -565,12 +576,16 @@ export default function Editor({ options, className }) {
     }
   }, [github, contentBranch, contentPath])
 
+  useEffect(() => {
+    setDirty(currentContent !== savedContent)
+  }, [currentContent, savedContent])
+
   return (
     <>
       {github ?
         <div className={clsx('editor', className)}>
           <div className='editor__announcements padding-horiz--md padding-vert--xs'>{announcement}</div>
-          <EditorMenu editor={editor} save={save} submit={submit} syncing={syncing}  pullrequest={pullrequest} />
+          <EditorMenu editor={editor} save={save} submit={submit} dirty={dirty} syncing={syncing} pullrequest={pullrequest} />
           <EditorPage editor={editor} />
         </div>
       :
