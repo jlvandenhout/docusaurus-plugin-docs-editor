@@ -346,7 +346,7 @@ export default function Editor({ options, className }) {
     // TODO: Allow user to create content on 404 response
     const {
       data: {
-        content: contentData
+        content: data
       }
     } = await github.api.repos.getContent({
       owner,
@@ -355,11 +355,61 @@ export default function Editor({ options, className }) {
       ref: `refs/heads/${branch}`
     })
 
-    const content = atob(contentData)
-    return content
+    const markdown = atob(data)
+
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
+    const markdownToHtmlProcessor = unified()
+      .use(markdownParse)
+      .use(markdownParseFrontmatter, ['yaml'])
+      .use(markdownExtractFrontmatter, { yaml: yaml.parse })
+      .use(markdownUnwrapImages)
+      .use(markdownAbsoluteImages, { absolutePath: staticContentBaseUrl })
+      .use(markdownToHtml)
+      .use(htmlStringify)
+
+    const {
+      data: frontmatter,
+      contents: html,
+    } = await markdownToHtmlProcessor.process(markdown)
+
+    setContentFrontmatter(frontmatter)
+    editor.chain().setContent(html).focus('start').run()
+    setSavedContent(editor.getHTML())
+    setCurrentContent(editor.getHTML())
   }
 
-  const requestCommit = async (owner, repo, branch, path, content) => {
+  const requestCommit = async (owner, repo, branch, path) => {
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
+    const removeImageBaseUrl = (url) => {
+      if (url.href.startsWith(staticContentBaseUrl)) {
+        const relativePath = url.href.slice(staticContentBaseUrl.length)
+        return `/${relativePath}`
+      }
+    }
+
+    const html = editor.getHTML()
+    const htmlToMarkdownProcessor = unified()
+      .use(htmlParse)
+      .use(htmlParseUrl, removeImageBaseUrl)
+      .use(htmlToMarkdown)
+      .use(markdownStringify, {
+        bullet: '-',
+        rule: '-',
+        listItemIndent: 'mixed'
+      })
+
+    let {
+      contents: markdown
+    } = await htmlToMarkdownProcessor.process(html)
+
+    if (contentFrontmatter) {
+      const frontmatter = yaml.stringify(contentFrontmatter)
+      markdown = `---\n${frontmatter}---\n\n${markdown}`
+    }
+
+    const data = btoa(markdown)
+
+    setSyncing(true)
     const {
       data: {
         sha
@@ -371,9 +421,6 @@ export default function Editor({ options, className }) {
       ref: `refs/heads/${branch}`
     })
 
-    const contentData = btoa(content)
-
-    setSyncing(true)
     setAnnouncement('Saving changes...')
     await github.api.repos.createOrUpdateFileContents({
       owner,
@@ -381,9 +428,11 @@ export default function Editor({ options, className }) {
       branch,
       path,
       sha,
-      content: contentData,
+      content: data,
       message: `Edit ${contentPath}`,
     })
+
+    setSavedContent(html)
 
     setAnnouncement('Changes have been saved, syncing with GitHub...')
     await new Promise((resolve, reject) => {
@@ -464,60 +513,6 @@ export default function Editor({ options, className }) {
     }
   }
 
-  const getContent = async (owner, repo, branch) => {
-    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
-    const removeImageBaseUrl = (url) => {
-      if (url.href.startsWith(staticContentBaseUrl)) {
-        const relativePath = url.href.slice(staticContentBaseUrl.length)
-        return `/${relativePath}`
-      }
-    }
-
-    const html = editor.getHTML()
-
-    const htmlToMarkdownProcessor = unified()
-      .use(htmlParse)
-      .use(htmlParseUrl, removeImageBaseUrl)
-      .use(htmlToMarkdown)
-      .use(markdownStringify, {
-        bullet: '-',
-        rule: '-',
-        listItemIndent: 'mixed'
-      })
-
-    let {
-      contents: markdown
-    } = await htmlToMarkdownProcessor.process(html)
-
-    if (contentFrontmatter) {
-      const frontmatter = yaml.stringify(contentFrontmatter)
-      markdown = `---\n${frontmatter}---\n\n${markdown}`
-    }
-
-    return markdown
-  }
-
-  const setContent = async (owner, repo, branch, content) => {
-    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`
-
-    const markdownToHtmlProcessor = unified()
-      .use(markdownParse)
-      .use(markdownParseFrontmatter, ['yaml'])
-      .use(markdownExtractFrontmatter, { yaml: yaml.parse })
-      .use(markdownUnwrapImages)
-      .use(markdownAbsoluteImages, { absolutePath: staticContentBaseUrl })
-      .use(markdownToHtml)
-      .use(htmlStringify)
-
-    const {
-      data: frontmatter,
-      contents: html,
-    } = await markdownToHtmlProcessor.process(content)
-
-    setContentFrontmatter(frontmatter)
-    editor.chain().setContent(html).focus('start').run()
-  }
-
   const init = async () => {
     const github = await requestAuthorization()
 
@@ -536,19 +531,14 @@ export default function Editor({ options, className }) {
   const open = async () => {
     const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
-    const content = await requestContent(owner, repo, branch, contentPath)
-    await setContent(owner, repo, branch, content)
-    setSavedContent(editor.getHTML())
-    setCurrentContent(editor.getHTML())
+    await requestContent(owner, repo, branch, contentPath)
   }
 
   const save = async () => {
     if (dirty) {
       const {owner, repo} = await requestRepo(github.user, docsRepo)
       const branch = await requestBranch(owner, repo, contentBranch)
-      const content = await getContent(owner, repo, branch)
-      setSavedContent(editor.getHTML())
-      await requestCommit(owner, repo, branch, contentPath, content)
+      await requestCommit(owner, repo, branch, contentPath)
     }
   }
 
@@ -556,9 +546,7 @@ export default function Editor({ options, className }) {
     const {owner, repo} = await requestRepo(github.user, docsRepo)
     const branch = await requestBranch(owner, repo, contentBranch)
     if (dirty) {
-      setSavedContent(editor.getHTML())
-      const content = await getContent(owner, repo, branch)
-      await requestCommit(owner, repo, branch, contentPath, content)
+      await requestCommit(owner, repo, branch, contentPath)
     }
     await requestPull(owner, branch)
   }
