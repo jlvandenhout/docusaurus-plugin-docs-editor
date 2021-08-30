@@ -1,36 +1,38 @@
 import React from 'react';
-import { useLocation } from '@docusaurus/router'
-import useBaseUrl from '@docusaurus/useBaseUrl'
-import { usePluginData } from '@docusaurus/useGlobalData'
-import Translate from '@docusaurus/Translate'
-import { useActivePlugin } from '@theme/hooks/useDocs'
+import { useLocation } from '@docusaurus/router';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import { usePluginData } from '@docusaurus/useGlobalData';
+import Translate from '@docusaurus/Translate';
+import { useActivePlugin } from '@theme/hooks/useDocs';
 
-
-export default function EditThisPage({editUrl}) {
-  const { pathname } = useLocation()
-  const activePlugin = useActivePlugin()
-  const editorOptions = usePluginData('docusaurus-plugin-docs-editor')
+export default function EditThisPage({ editUrl }) {
+  const { pathname } = useLocation();
+  const activePlugin = useActivePlugin();
+  const editorOptions = usePluginData('docusaurus-plugin-docs-editor');
 
   const getPath = () => {
     if (activePlugin) {
-      const pathnameBase = activePlugin.pluginData.path
-      const relativePath = pathname.slice(pathnameBase.length)
-      return `/${editorOptions.route}${relativePath}`
+      const pathnameBase = activePlugin.pluginData.path;
+      const relativePath = pathname.slice(pathnameBase.length);
+      return `/${editorOptions.route}${relativePath}`;
     }
-  }
+  };
 
-  const docPath = getPath()
+  const docPath = getPath();
 
   return (
     <>
-      { docPath &&
+      {docPath && (
         <>
-          <a href={useBaseUrl(docPath)} target="_blank" rel="noreferrer noopener">
+          <a
+            href={useBaseUrl(docPath)}
+            target="_blank"
+            rel="noreferrer noopener">
             Open in editor
           </a>
-          <span className='margin-horiz--sm'>|</span>
+          <span className="margin-horiz--sm">|</span>
         </>
-      }
+      )}
       <a href={editUrl} target="_blank" rel="noreferrer noopener">
         <Translate
           id="theme.common.editThisPage"
