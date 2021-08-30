@@ -1,0 +1,25 @@
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: Installation
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn install
+      - name: Check immutable yarn.lock
+        run: git diff --exit-code
+      - name: Lint
+        run: yarn lint
