@@ -49,7 +49,7 @@ import markdownUnwrapImages from 'remark-unwrap-images';
 import markdownAbsoluteImages from '@pondorasti/remark-img-links';
 import markdownExtractFrontmatter from 'remark-extract-frontmatter';
 import markdownToHtml from 'remark-rehype';
-import unified from 'unified';
+import { unified } from 'unified';
 import yaml from 'yaml';
 
 import EditorMenu from '@theme/EditorMenu';
@@ -348,13 +348,13 @@ export default function Editor({ options, className }) {
     const markdownToHtmlProcessor = unified()
       .use(markdownParse)
       .use(markdownParseFrontmatter, ['yaml'])
-      .use(markdownExtractFrontmatter, { yaml: yaml.parse })
+      .use(markdownExtractFrontmatter, { yaml: yaml.parse, remove: true })
       .use(markdownUnwrapImages)
       .use(markdownAbsoluteImages, { absolutePath: staticContentBaseUrl })
       .use(markdownToHtml)
       .use(htmlStringify);
 
-    const { data: frontmatter, contents: html } =
+    const { data: frontmatter, value: html } =
       await markdownToHtmlProcessor.process(markdown);
 
     setContentFrontmatter(frontmatter);

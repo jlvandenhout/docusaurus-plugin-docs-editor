@@ -13,8 +13,12 @@ export default function EditThisPage({ editUrl }) {
   const getPath = () => {
     if (activePlugin) {
       const pathnameBase = activePlugin.pluginData.path;
-      const relativePath = pathname.slice(pathnameBase.length);
-      return `/${editorOptions.route}${relativePath}`;
+      let relativePath = pathname.slice(pathnameBase.length);
+
+      if (relativePath.startsWith('/')) {
+        relativePath = relativePath.slice(1);
+      }
+      return `/${editorOptions.route}/${relativePath}`;
     }
   };
 
