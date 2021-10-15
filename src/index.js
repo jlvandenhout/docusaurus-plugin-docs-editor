@@ -2,11 +2,22 @@ const path = require('path');
 
 module.exports = function pluginDocsEditor(context, options) {
   let { baseUrl } = context;
+  if (baseUrl.startsWith('/')) {
+    baseUrl = baseUrl.slice(1);
+  }
+  if (baseUrl.endsWith('/')) {
+    baseUrl = baseUrl.slice(0, -1);
+  }
 
   let route = options.route || 'edit';
   if (route.startsWith('/')) {
     route = route.slice(1);
   }
+  if (route.endsWith('/')) {
+    route = route.slice(0, -1);
+  }
+
+  const basePath = baseUrl === '' ? `/${route}` : `/${baseUrl}/${route}`;
 
   return {
     name: 'docusaurus-plugin-docs-editor',
@@ -22,7 +33,7 @@ module.exports = function pluginDocsEditor(context, options) {
       );
 
       addRoute({
-        path: `${baseUrl}${route}`,
+        path: basePath,
         exact: false,
         component: '@theme/Editor',
         modules: {
