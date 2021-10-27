@@ -12,10 +12,8 @@ export default function EditThisPage({ editUrl }) {
 
   const getPath = () => {
     if (activePlugin) {
-      const pathnameBase = activePlugin.pluginData.path;
-      let relativePath = pathname.slice(pathnameBase.length);
-
-      if (relativePath.startsWith('/')) {
+      let relativePath = pathname;
+      if (pathname.startsWith('/')) {
         relativePath = relativePath.slice(1);
       }
       return `/${editorOptions.route}/${relativePath}`;

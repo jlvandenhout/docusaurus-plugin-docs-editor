@@ -49,7 +49,7 @@ import markdownUnwrapImages from 'remark-unwrap-images';
 import markdownAbsoluteImages from '@pondorasti/remark-img-links';
 import markdownExtractFrontmatter from 'remark-extract-frontmatter';
 import markdownToHtml from 'remark-rehype';
-import { unified } from 'unified';
+import unified from 'unified';
 import yaml from 'yaml';
 
 import EditorMenu from '@theme/EditorMenu';
@@ -87,7 +87,6 @@ export default function Editor({ options, className }) {
   let docsOwner = context.siteConfig.organizationName;
   let docsRepo = context.siteConfig.projectName;
   let docsPath = 'docs';
-
   if (options.docs) {
     docsOwner = options.docs.owner || docsOwner;
     docsRepo = options.docs.repo || docsRepo;
@@ -345,6 +344,7 @@ export default function Editor({ options, className }) {
     const markdown = utf8.decode(base64.decode(data));
 
     const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`;
+
     const markdownToHtmlProcessor = unified()
       .use(markdownParse)
       .use(markdownParseFrontmatter, ['yaml'])
@@ -354,10 +354,10 @@ export default function Editor({ options, className }) {
       .use(markdownToHtml)
       .use(htmlStringify);
 
-    const { data: frontmatter, value: html } =
+    const { data: frontMatter, contents: html } =
       await markdownToHtmlProcessor.process(markdown);
 
-    setContentFrontmatter(frontmatter);
+    setContentFrontmatter(frontMatter);
     editor.chain().setContent(html).focus('start').run();
     setSavedContent(editor.getHTML());
     setCurrentContent(editor.getHTML());
@@ -495,6 +495,7 @@ export default function Editor({ options, className }) {
       .replace(/\/$/, '');
 
     const contentPath = `${docsPath}${filePath}.md`;
+
     const contentBranch = `edit/${contentPath.replace(/[/.]/g, '-')}`;
 
     setGithub(github);
