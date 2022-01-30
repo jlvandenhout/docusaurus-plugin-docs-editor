@@ -3,7 +3,7 @@ import { useLocation } from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { usePluginData } from '@docusaurus/useGlobalData';
 import Translate from '@docusaurus/Translate';
-import { useActivePlugin } from '@theme/hooks/useDocs';
+import { useActivePlugin } from '@docusaurus/plugin-content-docs/client';
 
 export default function EditThisPage({ editUrl }) {
   const { pathname } = useLocation();
