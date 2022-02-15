@@ -46,5 +46,6 @@ jobs:
         run: |
           git config --global user.email "jlvandenhout@gmail.com"
           git config --global user.name "Jeroen van den Hout"
+          yarn install ./..
           yarn install --immutable
           yarn deploy
