@@ -5,6 +5,7 @@
     "es2021": true
   },
   "extends": [
+    "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier"
@@ -14,10 +15,10 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 12,
+    "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react"],
+  "plugins": ["react", "@typescript-eslint"],
   "settings": {
     "react": {
       "version": "detect"

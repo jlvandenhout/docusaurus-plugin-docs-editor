@@ -18,12 +18,13 @@ export default ({
   };
 
   return (
-    <NodeViewWrapper className="codeblock">
+    <NodeViewWrapper className='codeblock'>
       <select
-        className="codeblock__language"
+        className='codeblock__language'
         contentEditable={false}
         defaultValue={defaultLanguage}
-        onChange={(event) => updateLanguage(event.target.value)}>
+        onChange={(event) => updateLanguage(event.target.value)}
+      >
         <option value>auto</option>
         <option disabled>---</option>
         {extension.options.lowlight.listLanguages().map((lang, index) => (
@@ -32,9 +33,9 @@ export default ({
           </option>
         ))}
       </select>
-      <pre className="codeblock__code">
+      <pre className='codeblock__code'>
         <NodeViewContent
-          as="code"
+          as='code'
           className={clsx(language ? `language-${language}` : '')}
         />
       </pre>

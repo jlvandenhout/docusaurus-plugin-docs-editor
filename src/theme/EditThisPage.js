@@ -28,17 +28,19 @@ export default function EditThisPage({ editUrl }) {
         <>
           <a
             href={useBaseUrl(docPath)}
-            target="_blank"
-            rel="noreferrer noopener">
+            target='_blank'
+            rel='noreferrer noopener'
+          >
             Open in editor
           </a>
-          <span className="margin-horiz--sm">|</span>
+          <span className='margin-horiz--sm'>|</span>
         </>
       )}
-      <a href={editUrl} target="_blank" rel="noreferrer noopener">
+      <a href={editUrl} target='_blank' rel='noreferrer noopener'>
         <Translate
-          id="theme.common.editThisPage"
-          description="The link label to edit the current page">
+          id='theme.common.editThisPage'
+          description='The link label to edit the current page'
+        >
           Open on GitHub
         </Translate>
       </a>

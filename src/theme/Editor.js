@@ -547,7 +547,7 @@ export default function Editor({ options, className }) {
     <>
       {github ? (
         <div className={clsx('editor', className)}>
-          <div className="editor__announcements padding-horiz--md padding-vert--xs">
+          <div className='editor__announcements padding-horiz--md padding-vert--xs'>
             {announcement}
           </div>
           <EditorMenu

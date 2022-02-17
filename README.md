@@ -1,13 +1,15 @@
 # Docs Editor
+
 A Markdown editor for Docusaurus content using GitHub to commit any progress and allow contributors to create a pull request to the upstream repository without the need to know Markdown or GitHub.
 
-| ⚠️ This project is a work in progress ⚠️ |
-| --- |
+| ⚠️ This project is a work in progress ⚠️                                                                                                                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Some functionality is either not implemented or needs fixing. Please have a look at [open issues](https://github.com/jlvandenhout/docusaurus-plugin-docs-editor/issues) to join discussions and see what needs fixing. |
 
 [**LIVE PREVIEW**](https://jlvandenhout.github.io/docusaurus-plugin-docs-editor)
 
 ## Usage
+
 This plugin requires GitHub OAuth authorization to interact with GitHub on behalf of the user. To enable GitHub authorization:
 
 - Set up a [GitHub OAuth App](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to let users authorize your application.

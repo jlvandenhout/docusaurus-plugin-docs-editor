@@ -7,7 +7,8 @@ const headingLevels = [1, 2, 3, 4, 5, 6];
 const EditorGroup = ({ children }) => {
   return (
     <div
-      className={clsx('editor__group', 'margin-vert--sm', 'padding-horiz--xs')}>
+      className={clsx('editor__group', 'margin-vert--sm', 'padding-horiz--xs')}
+    >
       {children}
     </div>
   );
@@ -21,8 +22,9 @@ const EditorControl = ({ editor, name, action, children }) => {
         'margin-horiz--xs',
         name && editor.isActive(name) && 'editor__control--active',
       )}
-      onClick={action}>
-      <span className="editor__icon">{children}</span>
+      onClick={action}
+    >
+      <span className='editor__icon'>{children}</span>
     </button>
   );
 };
@@ -136,20 +138,23 @@ export default function EditorMenu({
     <>
       <Head>
         <link
-          href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet"></link>
+          href='https://fonts.googleapis.com/icon?family=Material+Icons'
+          rel='stylesheet'
+        ></link>
       </Head>
       <div className={clsx('editor__menu', className)}>
         <div className={clsx('editor__submenu')}>
           <EditorGroup>
             <EditorControl
               editor={editor}
-              action={() => editor.chain().focus().undo().run()}>
+              action={() => editor.chain().focus().undo().run()}
+            >
               undo
             </EditorControl>
             <EditorControl
               editor={editor}
-              action={() => editor.chain().focus().redo().run()}>
+              action={() => editor.chain().focus().redo().run()}
+            >
               redo
             </EditorControl>
           </EditorGroup>
@@ -157,33 +162,37 @@ export default function EditorMenu({
             <select
               className={clsx('editor__select', 'margin-horiz--xs')}
               value={checkFontStyle()}
-              onChange={changeFontStyle}>
-              <option hidden disabled value=""></option>
-              <option value="paragraph">Normal text</option>
+              onChange={changeFontStyle}
+            >
+              <option hidden disabled value=''></option>
+              <option value='paragraph'>Normal text</option>
               {headingLevels.map((level) => {
                 return (
                   <option
                     key={level}
-                    value={level}>{`Heading ${level}`}</option>
+                    value={level}
+                  >{`Heading ${level}`}</option>
                 );
               })}
-              <option value="code">Inline code</option>
+              <option value='code'>Inline code</option>
             </select>
           </EditorGroup>
           <EditorGroup>
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleBold().run()}
-              name="bold">
+              name='bold'
+            >
               format_bold
             </EditorControl>
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleItalic().run()}
-              name="italic">
+              name='italic'
+            >
               format_italic
             </EditorControl>
-            <EditorControl editor={editor} action={toggleLink} name="link">
+            <EditorControl editor={editor} action={toggleLink} name='link'>
               link
             </EditorControl>
           </EditorGroup>
@@ -191,37 +200,43 @@ export default function EditorMenu({
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleBulletList().run()}
-              name="bulletList">
+              name='bulletList'
+            >
               format_list_bulleted
             </EditorControl>
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleOrderedList().run()}
-              name="orderedList">
+              name='orderedList'
+            >
               format_list_numbered
             </EditorControl>
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleCodeBlock().run()}
-              name="codeBlock">
+              name='codeBlock'
+            >
               code
             </EditorControl>
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleBlockquote().run()}
-              name="blockquote">
+              name='blockquote'
+            >
               format_quote
             </EditorControl>
           </EditorGroup>
           <EditorGroup>
             <EditorControl
               editor={editor}
-              action={() => editor.chain().focus().setHorizontalRule().run()}>
+              action={() => editor.chain().focus().setHorizontalRule().run()}
+            >
               horizontal_rule
             </EditorControl>
             <EditorControl
               editor={editor}
-              action={() => editor.chain().focus().setHardBreak().run()}>
+              action={() => editor.chain().focus().setHardBreak().run()}
+            >
               keyboard_return
             </EditorControl>
           </EditorGroup>
@@ -230,7 +245,8 @@ export default function EditorMenu({
               editor={editor}
               action={() =>
                 editor.chain().focus().unsetAllMarks().clearNodes().run()
-              }>
+              }
+            >
               format_clear
             </EditorControl>
           </EditorGroup>
@@ -238,23 +254,26 @@ export default function EditorMenu({
         <div className={clsx('editor__submenu')}>
           <EditorGroup>
             <button
-              className="button button--sm button--primary margin-horiz--xs"
+              className='button button--sm button--primary margin-horiz--xs'
               disabled={syncing || !dirty}
-              onClick={onSave}>
+              onClick={onSave}
+            >
               Save
             </button>
             {pullrequest ? (
               <a
-                className="button button--sm button--outline button--primary margin-horiz--xs"
+                className='button button--sm button--outline button--primary margin-horiz--xs'
                 href={pullrequest}
-                target="_blank">
+                target='_blank' rel="noreferrer"
+              >
                 Review
               </a>
             ) : (
               <button
-                className="button button--sm button--primary margin-horiz--xs"
+                className='button button--sm button--primary margin-horiz--xs'
                 disabled={syncing}
-                onClick={onSubmit}>
+                onClick={onSubmit}
+              >
                 Submit
               </button>
             )}
