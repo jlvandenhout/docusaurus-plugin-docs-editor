@@ -67,7 +67,7 @@ lowlight.registerLanguage('python', python);
 lowlight.registerLanguage('rust', rust);
 lowlight.registerLanguage('shell', shell);
 
-export default function Editor({ options, className }: any) {
+export default function Editor({ options, className }) {
   const [announcement, setAnnouncement] = useState('');
   const [pullrequest, setPullrequest] = useState('');
 
@@ -146,7 +146,7 @@ export default function Editor({ options, className }: any) {
     },
   });
 
-  const requestAuthorizationCode = (redirectUrl: any) => {
+  const requestAuthorizationCode = (redirectUrl) => {
     const url = new URL(authorizationCodeUrl);
 
     const parameters = url.searchParams;
@@ -157,7 +157,7 @@ export default function Editor({ options, className }: any) {
     window.location.replace(url);
   };
 
-  const requestAuthorizationToken = async (code: any) => {
+  const requestAuthorizationToken = async (code) => {
     if (authorizationMethod === 'GET') {
       const url = new URL(code, authorizationTokenUrl);
 
@@ -232,11 +232,11 @@ export default function Editor({ options, className }: any) {
             owner: originOwner,
             repo: originRepo,
           })
-          .then((repo: any) => {
+          .then((repo) => {
             clearInterval(interval);
             resolve(repo);
           })
-          .catch((error: any) => {
+          .catch((error) => {
             if (error.status !== 404) {
               reject(error);
             }
@@ -245,7 +245,7 @@ export default function Editor({ options, className }: any) {
     });
   };
 
-  const requestRepo = async (owner: any, repo: any) => {
+  const requestRepo = async (owner, repo) => {
     let response;
 
     try {
@@ -289,7 +289,7 @@ export default function Editor({ options, className }: any) {
     return { owner: originOwner, repo: originRepo };
   };
 
-  const createBranch = async (owner: any, repo: any, branch: any) => {
+  const createBranch = async (owner, repo, branch) => {
     const {
       data: { default_branch: contentDefaultBranch },
       // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
@@ -318,7 +318,7 @@ export default function Editor({ options, className }: any) {
     });
   };
 
-  const requestBranch = async (owner: any, repo: any, branch: any) => {
+  const requestBranch = async (owner, repo, branch) => {
     try {
       // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       await github.api.repos.getBranch({
@@ -338,12 +338,7 @@ export default function Editor({ options, className }: any) {
     return branch;
   };
 
-  const requestContent = async (
-    owner: any,
-    repo: any,
-    branch: any,
-    path: any,
-  ) => {
+  const requestContent = async (owner, repo, branch, path) => {
     // TODO: Allow user to create content on 404 response
     const {
       data: { content: data },
@@ -378,14 +373,9 @@ export default function Editor({ options, className }: any) {
     setCurrentContent(editor.getHTML());
   };
 
-  const requestCommit = async (
-    owner: any,
-    repo: any,
-    branch: any,
-    path: any,
-  ) => {
+  const requestCommit = async (owner, repo, branch, path) => {
     const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`;
-    const removeImageBaseUrl = (url: any) => {
+    const removeImageBaseUrl = (url) => {
       if (url.href.startsWith(staticContentBaseUrl)) {
         const relativePath = url.href.slice(staticContentBaseUrl.length);
         return `/${relativePath}`;
@@ -448,7 +438,7 @@ export default function Editor({ options, className }: any) {
             path,
             ref: `refs/heads/${branch}`,
           })
-          .then((data: any) => {
+          .then((data) => {
             const {
               data: { sha: remoteSha },
             } = data;
@@ -462,7 +452,7 @@ export default function Editor({ options, className }: any) {
               resolve();
             }
           })
-          .catch((error: any) => {
+          .catch((error) => {
             if (error.status !== 404) {
               setSyncing(false);
               setAnnouncement('An error occured during sync');
@@ -473,7 +463,7 @@ export default function Editor({ options, className }: any) {
     });
   };
 
-  const requestPull = async (owner: any, branch: any) => {
+  const requestPull = async (owner, branch) => {
     const head = `${owner}:${branch}`;
 
     // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.

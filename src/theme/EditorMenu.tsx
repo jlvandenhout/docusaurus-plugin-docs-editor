@@ -4,7 +4,7 @@ import Head from '@docusaurus/Head';
 
 const headingLevels = [1, 2, 3, 4, 5, 6];
 
-const EditorGroup = ({ children }: any) => {
+const EditorGroup = ({ children }) => {
   return (
     <div
       className={clsx('editor__group', 'margin-vert--sm', 'padding-horiz--xs')}
@@ -14,7 +14,7 @@ const EditorGroup = ({ children }: any) => {
   );
 };
 
-const EditorControl = ({ editor, name, action, children }: any) => {
+const EditorControl = ({ editor, name, action, children }) => {
   return (
     <button
       className={clsx(
@@ -37,8 +37,8 @@ export default function EditorMenu({
   syncing,
   pullrequest,
   className,
-}: any) {
-  const changeFontStyle = (event: any) => {
+}) {
+  const changeFontStyle = (event) => {
     event.preventDefault();
 
     const value = event.target.value;
@@ -96,8 +96,8 @@ export default function EditorMenu({
       const state = editor.state;
 
       const { from, to } = state.selection;
-      let marks: any = [];
-      state.doc.nodesBetween(from, to, (node: any) => {
+      let marks = [];
+      state.doc.nodesBetween(from, to, (node) => {
         marks = [...marks, ...node.marks];
       });
 

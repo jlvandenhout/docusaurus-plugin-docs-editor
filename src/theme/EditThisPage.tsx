@@ -8,7 +8,7 @@ import Translate from '@docusaurus/Translate';
 // @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@docusaurus/plugin-content-doc... Remove this comment to see the full error message
 import { useActivePlugin } from '@docusaurus/plugin-content-docs/client';
 
-export default function EditThisPage({ editUrl }: any) {
+export default function EditThisPage({ editUrl }) {
   const { pathname } = useLocation();
   const activePlugin = useActivePlugin();
   const editorOptions = usePluginData('docusaurus-plugin-docs-editor');

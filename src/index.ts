@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = function pluginDocsEditor(context: any, options: any) {
+module.exports = function pluginDocsEditor(context, options) {
   let { baseUrl } = context;
   if (baseUrl.startsWith('/')) {
     baseUrl = baseUrl.slice(1);
@@ -24,9 +24,7 @@ module.exports = function pluginDocsEditor(context: any, options: any) {
     getThemePath() {
       return path.resolve(__dirname, './theme');
     },
-    async contentLoaded({
-      actions
-    }: any) {
+    async contentLoaded({ actions }) {
       const { createData, setGlobalData, addRoute } = actions;
 
       const optionsPath = await createData(

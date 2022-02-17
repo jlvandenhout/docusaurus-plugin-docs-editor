@@ -10,10 +10,10 @@ export default ({
 
   updateAttributes,
   extension,
-}: any) => {
+}) => {
   const [language, setLanguage] = useState(defaultLanguage);
 
-  const updateLanguage = (language: any) => {
+  const updateLanguage = (language) => {
     setLanguage(language);
     updateAttributes({ language });
   };
@@ -28,13 +28,11 @@ export default ({
       >
         <option value>auto</option>
         <option disabled>---</option>
-        {extension.options.lowlight
-          .listLanguages()
-          .map((lang: any, index: any) => (
-            <option key={index} value={lang}>
-              {lang}
-            </option>
-          ))}
+        {extension.options.lowlight.listLanguages().map((lang, index) => (
+          <option key={index} value={lang}>
+            {lang}
+          </option>
+        ))}
       </select>
       <pre className='codeblock__code'>
         <NodeViewContent
