@@ -1,11 +1,15 @@
 import React from 'react';
 import clsx from 'clsx';
+// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@docusaurus/Head' or its corre... Remove this comment to see the full error message
 import Head from '@docusaurus/Head';
 
 const headingLevels = [1, 2, 3, 4, 5, 6];
 
-const EditorGroup = ({ children }) => {
+const EditorGroup = ({
+  children
+}: any) => {
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <div
       className={clsx('editor__group', 'margin-vert--sm', 'padding-horiz--xs')}
     >
@@ -14,8 +18,14 @@ const EditorGroup = ({ children }) => {
   );
 };
 
-const EditorControl = ({ editor, name, action, children }) => {
+const EditorControl = ({
+  editor,
+  name,
+  action,
+  children
+}: any) => {
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <button
       className={clsx(
         'editor__control',
@@ -24,6 +34,7 @@ const EditorControl = ({ editor, name, action, children }) => {
       )}
       onClick={action}
     >
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <span className='editor__icon'>{children}</span>
     </button>
   );
@@ -36,9 +47,9 @@ export default function EditorMenu({
   dirty,
   syncing,
   pullrequest,
-  className,
-}) {
-  const changeFontStyle = (event) => {
+  className
+}: any) {
+  const changeFontStyle = (event: any) => {
     event.preventDefault();
 
     const value = event.target.value;
@@ -96,11 +107,12 @@ export default function EditorMenu({
       const state = editor.state;
 
       const { from, to } = state.selection;
-      let marks = [];
-      state.doc.nodesBetween(from, to, (node) => {
+      let marks: any = [];
+      state.doc.nodesBetween(from, to, (node: any) => {
         marks = [...marks, ...node.marks];
       });
 
+      // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'markItem' implicitly has an 'any' type.
       const mark = marks.find((markItem) => markItem.type.name === 'link');
 
       let url = mark && mark.attrs.href ? mark.attrs.href : '';
@@ -135,22 +147,30 @@ export default function EditorMenu({
   }
 
   return (
+    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <>
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <Head>
+        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <link
           href='https://fonts.googleapis.com/icon?family=Material+Icons'
           rel='stylesheet'
         ></link>
       </Head>
+      // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
       <div className={clsx('editor__menu', className)}>
+        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <div className={clsx('editor__submenu')}>
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorGroup>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().undo().run()}
             >
               undo
             </EditorControl>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().redo().run()}
@@ -158,26 +178,34 @@ export default function EditorMenu({
               redo
             </EditorControl>
           </EditorGroup>
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorGroup>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <select
               className={clsx('editor__select', 'margin-horiz--xs')}
               value={checkFontStyle()}
               onChange={changeFontStyle}
             >
+              // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
               <option hidden disabled value=''></option>
+              // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
               <option value='paragraph'>Normal text</option>
               {headingLevels.map((level) => {
                 return (
+                  // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                   <option
                     key={level}
                     value={level}
                   >{`Heading ${level}`}</option>
                 );
               })}
+              // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
               <option value='code'>Inline code</option>
             </select>
           </EditorGroup>
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorGroup>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleBold().run()}
@@ -185,6 +213,7 @@ export default function EditorMenu({
             >
               format_bold
             </EditorControl>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleItalic().run()}
@@ -192,11 +221,14 @@ export default function EditorMenu({
             >
               format_italic
             </EditorControl>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl editor={editor} action={toggleLink} name='link'>
               link
             </EditorControl>
           </EditorGroup>
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorGroup>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleBulletList().run()}
@@ -204,6 +236,7 @@ export default function EditorMenu({
             >
               format_list_bulleted
             </EditorControl>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleOrderedList().run()}
@@ -211,6 +244,7 @@ export default function EditorMenu({
             >
               format_list_numbered
             </EditorControl>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -218,6 +252,7 @@ export default function EditorMenu({
             >
               code
             </EditorControl>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().toggleBlockquote().run()}
@@ -226,13 +261,16 @@ export default function EditorMenu({
               format_quote
             </EditorControl>
           </EditorGroup>
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorGroup>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().setHorizontalRule().run()}
             >
               horizontal_rule
             </EditorControl>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() => editor.chain().focus().setHardBreak().run()}
@@ -240,7 +278,9 @@ export default function EditorMenu({
               keyboard_return
             </EditorControl>
           </EditorGroup>
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorGroup>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <EditorControl
               editor={editor}
               action={() =>
@@ -251,8 +291,11 @@ export default function EditorMenu({
             </EditorControl>
           </EditorGroup>
         </div>
+        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <div className={clsx('editor__submenu')}>
+          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorGroup>
+            // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <button
               className='button button--sm button--primary margin-horiz--xs'
               disabled={syncing || !dirty}
@@ -261,6 +304,7 @@ export default function EditorMenu({
               Save
             </button>
             {pullrequest ? (
+              // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
               <a
                 className='button button--sm button--outline button--primary margin-horiz--xs'
                 href={pullrequest}
@@ -270,6 +314,7 @@ export default function EditorMenu({
                 Review
               </a>
             ) : (
+              // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
               <button
                 className='button button--sm button--primary margin-horiz--xs'
                 disabled={syncing}
