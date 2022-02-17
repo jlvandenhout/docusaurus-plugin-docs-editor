@@ -1,7 +1,5 @@
-// @ts-expect-error ts-migrate(2580) FIXME: Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const path = require('path');
 
-// @ts-expect-error ts-migrate(2580) FIXME: Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports = function pluginDocsEditor(context: any, options: any) {
   let { baseUrl } = context;
   if (baseUrl.startsWith('/')) {
@@ -24,7 +22,6 @@ module.exports = function pluginDocsEditor(context: any, options: any) {
   return {
     name: 'docusaurus-plugin-docs-editor',
     getThemePath() {
-      // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name '__dirname'.
       return path.resolve(__dirname, './theme');
     },
     async contentLoaded({

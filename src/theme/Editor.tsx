@@ -1,29 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'base... Remove this comment to see the full error message
 import base64 from 'base-64';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'utf8... Remove this comment to see the full error message
 import utf8 from 'utf8';
 
 import clsx from 'clsx';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@docusaurus/useDocusaurusConte... Remove this comment to see the full error message
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@docusaurus/useBaseUrl' or its... Remove this comment to see the full error message
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'lowl... Remove this comment to see the full error message
 import lowlight from 'lowlight/lib/core.js';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'high... Remove this comment to see the full error message
 import c from 'highlight.js/lib/languages/c.js';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'high... Remove this comment to see the full error message
 import javascript from 'highlight.js/lib/languages/javascript.js';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'high... Remove this comment to see the full error message
 import markdown from 'highlight.js/lib/languages/markdown.js';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'high... Remove this comment to see the full error message
 import python from 'highlight.js/lib/languages/python.js';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'high... Remove this comment to see the full error message
 import rust from 'highlight.js/lib/languages/rust.js';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'high... Remove this comment to see the full error message
 import shell from 'highlight.js/lib/languages/shell.js';
 
 import { useEditor, ReactNodeViewRenderer } from '@tiptap/react';
@@ -51,27 +40,21 @@ import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
 
 import htmlStringify from 'rehype-stringify';
 import htmlParse from 'rehype-parse';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'rehy... Remove this comment to see the full error message
 import htmlParseUrl from 'rehype-urls';
 import htmlToMarkdown from 'rehype-remark';
 import markdownStringify from 'remark-stringify';
 import markdownParse from 'remark-parse';
 import markdownParseFrontmatter from 'remark-frontmatter';
 import markdownUnwrapImages from 'remark-unwrap-images';
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module '@pon... Remove this comment to see the full error message
 import markdownAbsoluteImages from '@pondorasti/remark-img-links';
 import markdownExtractFrontmatter from 'remark-extract-frontmatter';
 import markdownToHtml from 'remark-rehype';
 import unified from 'unified';
 import yaml from 'yaml';
 
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@theme/EditorMenu' or its corr... Remove this comment to see the full error message
 import EditorMenu from '@theme/EditorMenu';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@theme/EditorPage' or its corr... Remove this comment to see the full error message
 import EditorPage from '@theme/EditorPage';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@theme/EditorLogin' or its cor... Remove this comment to see the full error message
 import EditorLogin from '@theme/EditorLogin';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@theme/EditorCodeBlock' or its... Remove this comment to see the full error message
 import EditorCodeBlock from '@theme/EditorCodeBlock';
 
 import 'highlight.js/styles/github.css';
@@ -84,10 +67,7 @@ lowlight.registerLanguage('python', python);
 lowlight.registerLanguage('rust', rust);
 lowlight.registerLanguage('shell', shell);
 
-export default function Editor({
-  options,
-  className
-}: any) {
+export default function Editor({ options, className }: any) {
   const [announcement, setAnnouncement] = useState('');
   const [pullrequest, setPullrequest] = useState('');
 
@@ -174,7 +154,6 @@ export default function Editor({
     parameters.append('scope', authorizationScope);
     parameters.append('redirect_uri', redirectUrl);
 
-    // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'URL' is not assignable to parame... Remove this comment to see the full error message
     window.location.replace(url);
   };
 
@@ -182,7 +161,6 @@ export default function Editor({
     if (authorizationMethod === 'GET') {
       const url = new URL(code, authorizationTokenUrl);
 
-      // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'URL' is not assignable to parame... Remove this comment to see the full error message
       return await fetch(url)
         .then((response) => response.json())
         .then((data) => data.token);
@@ -209,7 +187,6 @@ export default function Editor({
     const code = parameters.get('code');
 
     if (code) {
-      // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'URL' is not assignable to parame... Remove this comment to see the full error message
       window.history.replaceState(window.history.state, '', url);
       const token = await requestAuthorizationToken(code);
 
@@ -241,7 +218,7 @@ export default function Editor({
         name: originRepo,
         owner: { login: originOwner },
       },
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     } = await github.api.repos.createFork({
       owner: docsOwner,
       repo: docsRepo,
@@ -315,7 +292,7 @@ export default function Editor({
   const createBranch = async (owner: any, repo: any, branch: any) => {
     const {
       data: { default_branch: contentDefaultBranch },
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     } = await github.api.repos.get({
       owner: docsOwner,
       repo: docsRepo,
@@ -325,7 +302,7 @@ export default function Editor({
       data: {
         commit: { sha },
       },
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     } = await github.api.repos.getBranch({
       owner: docsOwner,
       repo: docsRepo,
@@ -361,11 +338,16 @@ export default function Editor({
     return branch;
   };
 
-  const requestContent = async (owner: any, repo: any, branch: any, path: any) => {
+  const requestContent = async (
+    owner: any,
+    repo: any,
+    branch: any,
+    path: any,
+  ) => {
     // TODO: Allow user to create content on 404 response
     const {
       data: { content: data },
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     } = await github.api.repos.getContent({
       owner,
       repo,
@@ -390,17 +372,18 @@ export default function Editor({
     const { data: frontMatter, contents: html } =
       await markdownToHtmlProcessor.process(markdown);
 
-    // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
     setContentFrontmatter(frontMatter);
-    // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
     editor.chain().setContent(html).focus('start').run();
-    // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
     setSavedContent(editor.getHTML());
-    // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
     setCurrentContent(editor.getHTML());
   };
 
-  const requestCommit = async (owner: any, repo: any, branch: any, path: any) => {
+  const requestCommit = async (
+    owner: any,
+    repo: any,
+    branch: any,
+    path: any,
+  ) => {
     const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`;
     const removeImageBaseUrl = (url: any) => {
       if (url.href.startsWith(staticContentBaseUrl)) {
@@ -409,7 +392,6 @@ export default function Editor({
       }
     };
 
-    // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
     const html = editor.getHTML();
     const htmlToMarkdownProcessor = unified()
       .use(htmlParse)
@@ -433,7 +415,7 @@ export default function Editor({
     setSyncing(true);
     const {
       data: { sha },
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     } = await github.api.repos.getContent({
       owner,
       repo,
@@ -510,7 +492,7 @@ export default function Editor({
       setAnnouncement('Submitting changes...');
       const {
         data: { default_branch: contentDefaultBranch },
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       } = await github.api.repos.get({
         owner: docsOwner,
         repo: docsRepo,
@@ -519,7 +501,7 @@ export default function Editor({
       // TODO: Allow user to write a pull request title and description
       const {
         data: { html_url },
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
+        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       } = await github.api.pulls.create({
         owner: docsOwner,
         repo: docsRepo,
@@ -543,11 +525,8 @@ export default function Editor({
 
     const contentBranch = `edit/${contentPath.replace(/[/.]/g, '-')}`;
 
-    // @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ api: RestEndpointMethods; user... Remove this comment to see the full error message
     setGithub(github);
-    // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
     setContentBranch(contentBranch);
-    // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
     setContentPath(contentPath);
   };
 
@@ -595,16 +574,12 @@ export default function Editor({
   }, [currentContent, savedContent]);
 
   return (
-    // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
     <>
       {github ? (
-        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <div className={clsx('editor', className)}>
-          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <div className='editor__announcements padding-horiz--md padding-vert--xs'>
             {announcement}
           </div>
-          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorMenu
             editor={editor}
             save={save}
@@ -613,11 +588,9 @@ export default function Editor({
             syncing={syncing}
             pullrequest={pullrequest}
           />
-          // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
           <EditorPage editor={editor} />
         </div>
       ) : (
-        // @ts-expect-error ts-migrate(17004) FIXME: Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <EditorLogin />
       )}
     </>
