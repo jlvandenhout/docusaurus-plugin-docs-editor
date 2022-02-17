@@ -264,7 +264,8 @@ export default function EditorMenu({
               <a
                 className='button button--sm button--outline button--primary margin-horiz--xs'
                 href={pullrequest}
-                target='_blank' rel="noreferrer"
+                target='_blank'
+                rel='noreferrer'
               >
                 Review
               </a>
