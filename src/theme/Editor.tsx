@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-import lowlight from 'lowlight/lib/core.js';
+import { lowlight } from 'lowlight/lib/core.js';
 import c from 'highlight.js/lib/languages/c.js';
 import javascript from 'highlight.js/lib/languages/javascript.js';
 import markdown from 'highlight.js/lib/languages/markdown.js';
@@ -39,6 +39,7 @@ import { Octokit } from '@octokit/core';
 import { components } from '@octokit/openapi-types';
 import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
 import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
+import { RequestError } from '@octokit/request-error';
 
 import htmlStringify from 'rehype-stringify';
 import htmlParse from 'rehype-parse';
@@ -51,7 +52,7 @@ import markdownUnwrapImages from 'remark-unwrap-images';
 import markdownAbsoluteImages from '@pondorasti/remark-img-links';
 import markdownExtractFrontmatter from 'remark-extract-frontmatter';
 import markdownToHtml from 'remark-rehype';
-import unified from 'unified';
+import { unified } from 'unified';
 import yaml from 'yaml';
 
 import EditorMenu from '@theme/EditorMenu';
@@ -237,8 +238,7 @@ export default function Editor({ options, className }: EditorProps) {
       const { hook, rest: api } = new OctokitRest({ auth: token });
 
       hook.error('request', async (error) => {
-        // @ts-expect-error ts-migrate(2339) FIXME: Property 'status' does not exist on type 'RequestE... Remove this comment to see the full error message
-        if (error.status === 403) {
+        if (error instanceof RequestError && error.status === 403) {
           await requestAuthorization();
         } else {
           throw error;
@@ -392,13 +392,12 @@ export default function Editor({ options, className }: EditorProps) {
       .use(markdownParse)
       .use(markdownParseFrontmatter, ['yaml'])
       .use(markdownExtractFrontmatter, { yaml: yaml.parse, remove: true })
-      // @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
       .use(markdownUnwrapImages)
       .use(markdownAbsoluteImages, { absolutePath: staticContentBaseUrl })
       .use(markdownToHtml)
       .use(htmlStringify);
 
-    const { data: frontMatter, contents: html } =
+    const { data: frontMatter, value: html } =
       await markdownToHtmlProcessor.process(markdown);
 
     setContentFrontmatter(frontMatter);
@@ -427,7 +426,7 @@ export default function Editor({ options, className }: EditorProps) {
         listItemIndent: 'mixed',
       });
 
-    let { contents: markdown } = await htmlToMarkdownProcessor.process(html);
+    let { value: markdown } = await htmlToMarkdownProcessor.process(html);
 
     if (contentFrontmatter) {
       const frontmatter = yaml.stringify(contentFrontmatter);
