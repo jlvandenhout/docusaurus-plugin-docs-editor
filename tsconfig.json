@@ -9,7 +9,8 @@
     "types": ["node", "@docusaurus/module-type-aliases"],
     "baseUrl": ".",
     "paths": {
-      "@site/*": ["./*"]
+      "@site/*": ["./*"],
+      "@theme/*": ["./src/theme/*"]
     }
   }
 }

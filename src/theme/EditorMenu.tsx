@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import clsx from 'clsx';
 import Head from '@docusaurus/Head';
+import { Editor as EditorType } from '@tiptap/react';
 
 const headingLevels = [1, 2, 3, 4, 5, 6];
 
-const EditorGroup = ({ children }) => {
+interface EditorGroupProps {
+  children?: ReactNode;
+}
+
+const EditorGroup = ({ children }: EditorGroupProps) => {
   return (
     <div
       className={clsx('editor__group', 'margin-vert--sm', 'padding-horiz--xs')}
@@ -14,7 +19,19 @@ const EditorGroup = ({ children }) => {
   );
 };
 
-const EditorControl = ({ editor, name, action, children }) => {
+interface EditorControlProps {
+  editor: EditorType;
+  name?: string;
+  action: () => void;
+  children?: ReactNode;
+}
+
+const EditorControl = ({
+  editor,
+  name,
+  action,
+  children,
+}: EditorControlProps) => {
   return (
     <button
       className={clsx(
@@ -29,6 +46,16 @@ const EditorControl = ({ editor, name, action, children }) => {
   );
 };
 
+interface EditorMenuProps {
+  editor: EditorType;
+  save: () => void;
+  submit: () => void;
+  dirty: boolean;
+  syncing: boolean;
+  pullrequest: string;
+  className?: string;
+}
+
 export default function EditorMenu({
   editor,
   save,
@@ -37,7 +64,7 @@ export default function EditorMenu({
   syncing,
   pullrequest,
   className,
-}) {
+}: EditorMenuProps) {
   const changeFontStyle = (event) => {
     event.preventDefault();
 
@@ -47,14 +74,13 @@ export default function EditorMenu({
     } else if (value === 'paragraph') {
       editor.chain().focus().unsetCode().setParagraph().run();
     } else {
-      const level = parseInt(value);
-      if (headingLevels.includes(level)) {
+      if (headingLevels.includes(value)) {
         editor
           .chain()
           .focus()
           .clearNodes()
           .unsetCode()
-          .setHeading({ level })
+          .setHeading({ level: value })
           .selectParentNode()
           .unsetCode()
           .run();

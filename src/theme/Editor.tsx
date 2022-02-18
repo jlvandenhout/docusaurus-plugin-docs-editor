@@ -36,7 +36,9 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
 
 import { Octokit } from '@octokit/core';
+import { components } from '@octokit/openapi-types';
 import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
+import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
 
 import htmlStringify from 'rehype-stringify';
 import htmlParse from 'rehype-parse';
@@ -60,6 +62,13 @@ import EditorCodeBlock from '@theme/EditorCodeBlock';
 import 'highlight.js/styles/github.css';
 import './Editor.css';
 
+interface GitHub {
+  api?: RestEndpointMethods;
+  user?: string;
+}
+
+type GitHubContent = components['schemas']['content-file'];
+
 lowlight.registerLanguage('c', c);
 lowlight.registerLanguage('javascript', javascript);
 lowlight.registerLanguage('markdown', markdown);
@@ -67,15 +76,49 @@ lowlight.registerLanguage('python', python);
 lowlight.registerLanguage('rust', rust);
 lowlight.registerLanguage('shell', shell);
 
-export default function Editor({ options, className }) {
+export interface EditorOptions {
+  route: string;
+}
+
+interface EditorProps {
+  options: {
+    // REQUIRED - The base route to the editor
+    route: string;
+    docs: {
+      // The username that owns the docs, defaults to siteConfig.organizationName
+      owner: string;
+      // The repository that contains the docs, defaults to siteConfig.projectName
+      repo: string;
+      // The path to the docs section in your repository
+      path: string;
+    };
+    static: {
+      // The path to the static content section in your repository
+      path: string;
+    };
+
+    // GitHub OAuth Application settings
+    github: {
+      // REQUIRED - The Client ID you got from the GitHub OAuth App setup
+      clientId: string;
+      // REQUIRED - The plugin will append the authorization code to this URL
+      tokenUrl: string;
+      // The request method to use (GET or POST), defaults to GET
+      method: 'GET' | 'POST';
+    };
+  };
+  className?: string;
+}
+
+export default function Editor({ options, className }: EditorProps) {
   const [announcement, setAnnouncement] = useState('');
   const [pullrequest, setPullrequest] = useState('');
 
-  const [contentFrontmatter, setContentFrontmatter] = useState();
-  const [contentBranch, setContentBranch] = useState();
-  const [contentPath, setContentPath] = useState();
+  const [contentFrontmatter, setContentFrontmatter] = useState({});
+  const [contentBranch, setContentBranch] = useState('');
+  const [contentPath, setContentPath] = useState('');
 
-  const [github, setGithub] = useState();
+  const [github, setGithub] = useState({} as GitHub);
   const [syncing, setSyncing] = useState(false);
   const [savedContent, setSavedContent] = useState('');
   const [currentContent, setCurrentContent] = useState('');
@@ -161,7 +204,7 @@ export default function Editor({ options, className }) {
     if (authorizationMethod === 'GET') {
       const url = new URL(code, authorizationTokenUrl);
 
-      return await fetch(url)
+      return await fetch(url.toString())
         .then((response) => response.json())
         .then((data) => data.token);
     } else if (authorizationMethod === 'POST') {
@@ -218,7 +261,6 @@ export default function Editor({ options, className }) {
         name: originRepo,
         owner: { login: originOwner },
       },
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     } = await github.api.repos.createFork({
       owner: docsOwner,
       repo: docsRepo,
@@ -226,7 +268,6 @@ export default function Editor({ options, className }) {
 
     return await new Promise((resolve, reject) => {
       const interval = setInterval(() => {
-        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
         github.api.repos
           .get({
             owner: originOwner,
@@ -249,7 +290,6 @@ export default function Editor({ options, className }) {
     let response;
 
     try {
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       response = await github.api.repos.get({
         owner,
         repo,
@@ -292,7 +332,6 @@ export default function Editor({ options, className }) {
   const createBranch = async (owner, repo, branch) => {
     const {
       data: { default_branch: contentDefaultBranch },
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     } = await github.api.repos.get({
       owner: docsOwner,
       repo: docsRepo,
@@ -302,14 +341,12 @@ export default function Editor({ options, className }) {
       data: {
         commit: { sha },
       },
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     } = await github.api.repos.getBranch({
       owner: docsOwner,
       repo: docsRepo,
       branch: contentDefaultBranch,
     });
 
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     await github.api.git.createRef({
       owner,
       repo,
@@ -320,7 +357,6 @@ export default function Editor({ options, className }) {
 
   const requestBranch = async (owner, repo, branch) => {
     try {
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       await github.api.repos.getBranch({
         owner,
         repo,
@@ -340,16 +376,14 @@ export default function Editor({ options, className }) {
 
   const requestContent = async (owner, repo, branch, path) => {
     // TODO: Allow user to create content on 404 response
-    const {
-      data: { content: data },
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-    } = await github.api.repos.getContent({
+    const { data: response } = await github.api.repos.getContent({
       owner,
       repo,
       path,
       ref: `refs/heads/${branch}`,
     });
 
+    const { content: data } = response as GitHubContent;
     const markdown = utf8.decode(base64.decode(data));
 
     const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`;
@@ -403,18 +437,16 @@ export default function Editor({ options, className }) {
     const data = base64.encode(utf8.encode(markdown));
 
     setSyncing(true);
-    const {
-      data: { sha },
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-    } = await github.api.repos.getContent({
+    const { data: response } = await github.api.repos.getContent({
       owner,
       repo,
       path,
       ref: `refs/heads/${branch}`,
     });
 
+    const { sha } = response as GitHubContent;
+
     setAnnouncement('Saving changes...');
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     await github.api.repos.createOrUpdateFileContents({
       owner,
       repo,
@@ -430,7 +462,6 @@ export default function Editor({ options, className }) {
     setAnnouncement('Changes have been saved, syncing with GitHub...');
     await new Promise((resolve, reject) => {
       const interval = setInterval(() => {
-        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
         github.api.repos
           .getContent({
             owner,
@@ -438,10 +469,8 @@ export default function Editor({ options, className }) {
             path,
             ref: `refs/heads/${branch}`,
           })
-          .then((data) => {
-            const {
-              data: { sha: remoteSha },
-            } = data;
+          .then(({ data: response }) => {
+            const { sha: remoteSha } = response as GitHubContent;
 
             if (remoteSha != sha) {
               // Remote file is updated
@@ -466,7 +495,6 @@ export default function Editor({ options, className }) {
   const requestPull = async (owner, branch) => {
     const head = `${owner}:${branch}`;
 
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     const { data: pulls } = await github.api.pulls.list({
       owner: docsOwner,
       repo: docsRepo,
@@ -482,7 +510,6 @@ export default function Editor({ options, className }) {
       setAnnouncement('Submitting changes...');
       const {
         data: { default_branch: contentDefaultBranch },
-        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       } = await github.api.repos.get({
         owner: docsOwner,
         repo: docsRepo,
@@ -491,7 +518,6 @@ export default function Editor({ options, className }) {
       // TODO: Allow user to write a pull request title and description
       const {
         data: { html_url },
-        // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       } = await github.api.pulls.create({
         owner: docsOwner,
         repo: docsRepo,
@@ -521,7 +547,6 @@ export default function Editor({ options, className }) {
   };
 
   const open = async () => {
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     const { owner, repo } = await requestRepo(github.user, docsRepo);
     const branch = await requestBranch(owner, repo, contentBranch);
     await requestContent(owner, repo, branch, contentPath);
@@ -529,7 +554,6 @@ export default function Editor({ options, className }) {
 
   const save = async () => {
     if (dirty) {
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
       const { owner, repo } = await requestRepo(github.user, docsRepo);
       const branch = await requestBranch(owner, repo, contentBranch);
       await requestCommit(owner, repo, branch, contentPath);
@@ -537,7 +561,6 @@ export default function Editor({ options, className }) {
   };
 
   const submit = async () => {
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     const { owner, repo } = await requestRepo(github.user, docsRepo);
     const branch = await requestBranch(owner, repo, contentBranch);
     if (dirty) {

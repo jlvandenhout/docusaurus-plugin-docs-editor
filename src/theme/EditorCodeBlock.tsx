@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
+import { NodeViewProps, NodeViewWrapper, NodeViewContent } from '@tiptap/react';
 
 import clsx from 'clsx';
 
-export default ({
+export default function EditorCodeBlock({
   node: {
     attrs: { language: defaultLanguage },
   },
 
   updateAttributes,
   extension,
-}) => {
+}: NodeViewProps) {
   const [language, setLanguage] = useState(defaultLanguage);
 
   const updateLanguage = (language) => {
@@ -26,7 +26,7 @@ export default ({
         defaultValue={defaultLanguage}
         onChange={(event) => updateLanguage(event.target.value)}
       >
-        <option value>auto</option>
+        <option value=''>auto</option>
         <option disabled>---</option>
         {extension.options.lowlight.listLanguages().map((lang, index) => (
           <option key={index} value={lang}>
@@ -42,4 +42,4 @@ export default ({
       </pre>
     </NodeViewWrapper>
   );
-};
+}
