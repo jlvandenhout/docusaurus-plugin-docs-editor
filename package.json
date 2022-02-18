@@ -2,17 +2,20 @@
   "name": "@jlvandenhout/docusaurus-plugin-docs-editor",
   "version": "0.7.0",
   "description": "A WYSIWYG editor for your documents",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/jlvandenhout/docusaurus-plugin-docs-editor",
   "author": "Jeroen van den Hout <jlvandenhout@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
     "check": "prettier --check . && eslint --cache .",
     "fix": "prettier --write . && eslint --cache --fix ."
   },
   "dependencies": {
     "@docusaurus/core": "^2.0.0-beta.15",
     "@docusaurus/plugin-content-docs": "^2.0.0-beta.15",
+    "@docusaurus/types": "^2.0.0-beta.15",
     "@octokit/core": "^3.5.1",
     "@octokit/openapi-types": "^11.2.0",
     "@octokit/plugin-rest-endpoint-methods": "^5.5.1",

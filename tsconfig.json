@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
+    "target": "ES2019",
+    "module": "commonjs",
     "allowJs": true,
     "esModuleInterop": true,
     "jsx": "react",
-    "lib": ["DOM"],
-    "noEmit": true,
+    "lib": ["ESNext", "DOM"],
+    "declaration": true,
+    "declarationMap": false,
     "noImplicitAny": false,
     "types": [
       "node",
@@ -15,6 +18,8 @@
     "paths": {
       "@site/*": ["./*"],
       "@theme/*": ["./src/theme/*"]
-    }
+    },
+    "rootDir": "src",
+    "outDir": "lib"
   }
 }
