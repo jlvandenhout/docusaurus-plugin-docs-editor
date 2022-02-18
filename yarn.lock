@@ -499,7 +499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-proposal-nullish-coalescing-operator@npm:^7.13.8, @babel/plugin-proposal-nullish-coalescing-operator@npm:^7.16.7":
+"@babel/plugin-proposal-nullish-coalescing-operator@npm:^7.12.13, @babel/plugin-proposal-nullish-coalescing-operator@npm:^7.13.8, @babel/plugin-proposal-nullish-coalescing-operator@npm:^7.16.7":
   version: 7.16.7
   resolution: "@babel/plugin-proposal-nullish-coalescing-operator@npm:7.16.7"
   dependencies:
@@ -563,7 +563,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-proposal-optional-chaining@npm:^7.13.12, @babel/plugin-proposal-optional-chaining@npm:^7.16.7":
+"@babel/plugin-proposal-optional-chaining@npm:^7.12.16, @babel/plugin-proposal-optional-chaining@npm:^7.13.12, @babel/plugin-proposal-optional-chaining@npm:^7.16.7":
   version: 7.16.7
   resolution: "@babel/plugin-proposal-optional-chaining@npm:7.16.7"
   dependencies:
@@ -1004,7 +1004,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-modules-commonjs@npm:^7.13.8, @babel/plugin-transform-modules-commonjs@npm:^7.16.8":
+"@babel/plugin-transform-modules-commonjs@npm:^7.12.13, @babel/plugin-transform-modules-commonjs@npm:^7.13.8, @babel/plugin-transform-modules-commonjs@npm:^7.16.8":
   version: 7.16.8
   resolution: "@babel/plugin-transform-modules-commonjs@npm:7.16.8"
   dependencies:
@@ -1419,7 +1419,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-typescript@npm:^7.1.0, @babel/preset-typescript@npm:^7.13.0, @babel/preset-typescript@npm:^7.15.0, @babel/preset-typescript@npm:^7.16.0":
+"@babel/preset-typescript@npm:^7.1.0, @babel/preset-typescript@npm:^7.12.16, @babel/preset-typescript@npm:^7.13.0, @babel/preset-typescript@npm:^7.15.0, @babel/preset-typescript@npm:^7.16.0":
   version: 7.16.7
   resolution: "@babel/preset-typescript@npm:7.16.7"
   dependencies:
@@ -1727,7 +1727,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/utils@npm:2.0.0-beta.15":
+"@docusaurus/utils@npm:2.0.0-beta.15, @docusaurus/utils@npm:^2.0.0-beta.7":
   version: 2.0.0-beta.15
   resolution: "@docusaurus/utils@npm:2.0.0-beta.15"
   dependencies:
@@ -1850,6 +1850,7 @@ __metadata:
     "@docusaurus/module-type-aliases": ^2.0.0-beta.15
     "@docusaurus/plugin-content-docs": ^2.0.0-beta.15
     "@docusaurus/types": ^2.0.0-beta.15
+    "@joshcena/docusaurus-plugin-utils": ^0.1.3
     "@octokit/core": ^3.5.1
     "@octokit/openapi-types": ^11.2.0
     "@octokit/plugin-rest-endpoint-methods": ^5.5.1
@@ -1907,6 +1908,29 @@ __metadata:
     yaml: ^1.10.2
   languageName: unknown
   linkType: soft
+
+"@joshcena/docusaurus-plugin-utils@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@joshcena/docusaurus-plugin-utils@npm:0.1.3"
+  dependencies:
+    "@babel/core": ^7.15.5
+    "@babel/plugin-proposal-nullish-coalescing-operator": ^7.12.13
+    "@babel/plugin-proposal-optional-chaining": ^7.12.16
+    "@babel/plugin-transform-modules-commonjs": ^7.12.13
+    "@babel/preset-typescript": ^7.12.16
+    "@docusaurus/utils": ^2.0.0-beta.7
+    "@types/lodash": ^4.14.174
+    chalk: ^4.1.2
+    chokidar: ^3.5.2
+    commander: ^5.1.0
+    lodash: ^4.17.21
+  peerDependencies:
+    prettier: 2.x
+  bin:
+    docusaurus-plugin: bin/index.js
+  checksum: aedba2e0e4c36bee703cc7c6053ea5d6a18b69ff7f86a26adeeeb5f8ed15572008fd4170e1e5f7ea3b1672fef5fd156991abdc67a8b10ca4faf6bdd2da17f12f
+  languageName: node
+  linkType: hard
 
 "@jridgewell/resolve-uri@npm:^3.0.3":
   version: 3.0.5
@@ -2802,6 +2826,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: b5f8aa592cc21c16d99e69aec0976f12b893b055e4456d90148a610a6b6088e297b2ba5f38f8c8280cef006cfd8f9ec99e069905020882619dc5fc8aa46f5f27
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:^4.14.174":
+  version: 4.14.178
+  resolution: "@types/lodash@npm:4.14.178"
+  checksum: a69a04a60bfc5257c3130a554b4efa0c383f0141b7b3db8ab7cf07ad2a46ea085fce66d0242da41da7e5647b133d5dfb2c15add9cbed8d7fef955e4a1e5b3128
   languageName: node
   linkType: hard
 
