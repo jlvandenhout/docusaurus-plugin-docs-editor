@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@docusaurus/core": "^2.0.0-beta.15",
+    "@docusaurus/plugin-content-docs": "^2.0.0-beta.15",
     "@octokit/core": "^3.5.1",
     "@octokit/openapi-types": "^11.2.0",
     "@octokit/plugin-rest-endpoint-methods": "^5.5.1",

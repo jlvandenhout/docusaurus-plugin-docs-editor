@@ -1,6 +1,8 @@
+// @ts-check
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
+/** @type {import('@docusaurus/types').Plugin} */
 module.exports = function pluginDocsEditor(context, options) {
   let { baseUrl } = context;
   if (baseUrl.startsWith('/')) {

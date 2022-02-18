@@ -1505,7 +1505,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/core@npm:^2.0.0-beta.15":
+"@docusaurus/core@npm:2.0.0-beta.15, @docusaurus/core@npm:^2.0.0-beta.15":
   version: 2.0.0-beta.15
   resolution: "@docusaurus/core@npm:2.0.0-beta.15"
   dependencies:
@@ -1648,6 +1648,32 @@ __metadata:
     "@types/react-router-config": "*"
     "@types/react-router-dom": "*"
   checksum: dd7d3de46a6886d3e367b31d0107eef7a5ffc54acae557625e6fb937619152ddbabafd774ffa6beb7783e039b09a3b916655393ca1a09d3d8e36a75c12e2c569
+  languageName: node
+  linkType: hard
+
+"@docusaurus/plugin-content-docs@npm:^2.0.0-beta.15":
+  version: 2.0.0-beta.15
+  resolution: "@docusaurus/plugin-content-docs@npm:2.0.0-beta.15"
+  dependencies:
+    "@docusaurus/core": 2.0.0-beta.15
+    "@docusaurus/logger": 2.0.0-beta.15
+    "@docusaurus/mdx-loader": 2.0.0-beta.15
+    "@docusaurus/utils": 2.0.0-beta.15
+    "@docusaurus/utils-validation": 2.0.0-beta.15
+    combine-promises: ^1.1.0
+    fs-extra: ^10.0.0
+    import-fresh: ^3.2.2
+    js-yaml: ^4.0.0
+    lodash: ^4.17.20
+    remark-admonitions: ^1.2.1
+    shelljs: ^0.8.4
+    tslib: ^2.3.1
+    utility-types: ^3.10.0
+    webpack: ^5.61.0
+  peerDependencies:
+    react: ^16.8.4 || ^17.0.0
+    react-dom: ^16.8.4 || ^17.0.0
+  checksum: 221c0bef297f7b122a0ef080f681edadc5e945d776a4900bf662d8ba8208a02e1849594d3e2756ffe982ed9e70c97c06706abb4e97f6fae6e11eab3934f2dd53
   languageName: node
   linkType: hard
 
@@ -1822,6 +1848,7 @@ __metadata:
   dependencies:
     "@docusaurus/core": ^2.0.0-beta.15
     "@docusaurus/module-type-aliases": ^2.0.0-beta.15
+    "@docusaurus/plugin-content-docs": ^2.0.0-beta.15
     "@octokit/core": ^3.5.1
     "@octokit/openapi-types": ^11.2.0
     "@octokit/plugin-rest-endpoint-methods": ^5.5.1
@@ -4514,6 +4541,13 @@ __metadata:
   version: 1.4.0
   resolution: "colors@npm:1.4.0"
   checksum: 98aa2c2418ad87dedf25d781be69dc5fc5908e279d9d30c34d8b702e586a0474605b3a189511482b9d5ed0d20c867515d22749537f7bc546256c6014f3ebdcec
+  languageName: node
+  linkType: hard
+
+"combine-promises@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "combine-promises@npm:1.1.0"
+  checksum: 23b55f66d5cea3ddf39608c07f7a96065c7bb7cc4f54c7f217040771262ad97e808b30f7f267c553a9ca95552fc9813fb465232f5d82e190e118b33238186af8
   languageName: node
   linkType: hard
 
@@ -7313,7 +7347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-fresh@npm:^3.0.0, import-fresh@npm:^3.1.0, import-fresh@npm:^3.2.1, import-fresh@npm:^3.3.0":
+"import-fresh@npm:^3.0.0, import-fresh@npm:^3.1.0, import-fresh@npm:^3.2.1, import-fresh@npm:^3.2.2, import-fresh@npm:^3.3.0":
   version: 3.3.0
   resolution: "import-fresh@npm:3.3.0"
   dependencies:

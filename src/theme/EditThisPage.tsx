@@ -3,7 +3,6 @@ import { useLocation } from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { usePluginData } from '@docusaurus/useGlobalData';
 import Translate from '@docusaurus/Translate';
-// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@docusaurus/plugin-content-doc... Remove this comment to see the full error message
 import { useActivePlugin } from '@docusaurus/plugin-content-docs/client';
 import { EditorOptions } from './Editor';
 

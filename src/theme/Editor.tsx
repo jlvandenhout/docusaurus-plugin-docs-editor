@@ -477,8 +477,7 @@ export default function Editor({ options, className }: EditorProps) {
               clearInterval(interval);
               setSyncing(false);
               setAnnouncement('Changes have been saved');
-              // @ts-expect-error ts-migrate(2794) FIXME: Expected 1 arguments, but got 0. Did you forget to... Remove this comment to see the full error message
-              resolve();
+              resolve(null);
             }
           })
           .catch((error) => {
