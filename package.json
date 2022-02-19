@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "build": "docusaurus-plugin build",
-    "watch": "docusaurus-plugin watch",
+    "watch": "docusaurus-plugin build && docusaurus-plugin watch",
     "check": "prettier --check . && eslint --cache . && tsc",
     "fix": "prettier --write . && eslint --cache --fix ."
   },
