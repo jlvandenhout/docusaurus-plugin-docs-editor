@@ -19,5 +19,8 @@
     },
     "rootDir": "src",
     "outDir": "lib"
-  }
+  },
+  "exclude": [
+    "preview"
+  ]
 }
