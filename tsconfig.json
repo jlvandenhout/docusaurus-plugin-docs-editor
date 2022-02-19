@@ -2,13 +2,10 @@
   "compilerOptions": {
     "target": "ES2019",
     "module": "commonjs",
-    "allowJs": true,
-    "esModuleInterop": true,
-    "jsx": "react",
     "lib": ["ESNext", "DOM"],
-    "declaration": true,
-    "declarationMap": false,
-    "noImplicitAny": false,
+    "jsx": "react",
+    "noEmit": true,
+    "esModuleInterop": true,
     "types": [
       "node",
       "@docusaurus/module-type-aliases",
