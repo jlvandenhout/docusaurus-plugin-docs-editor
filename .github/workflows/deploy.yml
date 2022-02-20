@@ -25,9 +25,6 @@ jobs:
           yarn install
           yarn setup
           yarn build
-
-      # Popular action to deploy to GitHub Pages:
-      # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
       - name: Deploy preview to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
