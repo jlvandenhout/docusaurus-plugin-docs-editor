@@ -23,7 +23,6 @@ jobs:
         working-directory: preview
         run: |
           yarn install
-          yarn setup
           yarn build
       - name: Deploy preview to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
