@@ -28,16 +28,13 @@ export default function EditThisPage({ editUrl }: EditThisPageProps) {
   };
 
   const docPath = getPath();
+  const editPath = useBaseUrl(docPath);
 
   return (
     <>
       {docPath && (
         <>
-          <a
-            href={useBaseUrl(docPath)}
-            target='_blank'
-            rel='noreferrer noopener'
-          >
+          <a href={editPath} target='_blank' rel='noreferrer noopener'>
             Open in editor
           </a>
           <span className='margin-horiz--sm'>|</span>
