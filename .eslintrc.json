@@ -22,7 +22,7 @@
   "plugins": ["react", "@typescript-eslint"],
   "settings": {
     "react": {
-      "version": "detect"
+      "version": "17.0.2"
     }
   }
 }

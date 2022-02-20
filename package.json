@@ -8,8 +8,8 @@
   "license": "MIT",
   "scripts": {
     "build": "docusaurus-plugin build",
-    "watch": "docusaurus-plugin build && docusaurus-plugin watch",
-    "start": "concurrently \"yarn watch\" \"cd preview && yarn start\"",
+    "watch": "docusaurus-plugin watch",
+    "start": "yarn build && concurrently \"yarn watch\" \"yarn workspace preview start\"",
     "check": "prettier --check . && eslint --cache . && tsc",
     "fix": "prettier --write . && eslint --cache --fix ."
   },
@@ -81,6 +81,9 @@
     "/lib"
   ],
   "peerDependencies": {
-    "react": "^16.8.4 || ^17.0.0"
-  }
+    "react": "^17.0.2"
+  },
+  "workspaces": [
+    "preview"
+  ]
 }
