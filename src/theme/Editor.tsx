@@ -7,13 +7,13 @@ import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-import { lowlight } from 'lowlight/lib/core.js';
-import c from 'highlight.js/lib/languages/c.js';
-import javascript from 'highlight.js/lib/languages/javascript.js';
-import markdown from 'highlight.js/lib/languages/markdown.js';
-import python from 'highlight.js/lib/languages/python.js';
-import rust from 'highlight.js/lib/languages/rust.js';
-import shell from 'highlight.js/lib/languages/shell.js';
+import { lowlight } from 'lowlight/lib/core';
+import c from 'highlight.js/lib/languages/c';
+import javascript from 'highlight.js/lib/languages/javascript';
+import markdown from 'highlight.js/lib/languages/markdown';
+import python from 'highlight.js/lib/languages/python';
+import rust from 'highlight.js/lib/languages/rust';
+import shell from 'highlight.js/lib/languages/shell';
 
 import { useEditor, ReactNodeViewRenderer } from '@tiptap/react';
 import Blockquote from '@tiptap/extension-blockquote';
