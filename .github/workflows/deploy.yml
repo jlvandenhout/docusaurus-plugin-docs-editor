@@ -22,6 +22,7 @@ jobs:
       - name: Build preview
         working-directory: preview
         run: |
+          npm link ../node_modules/react
           yarn install
           yarn build
 
