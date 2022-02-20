@@ -28,10 +28,9 @@ jobs:
       # Popular action to deploy to GitHub Pages:
       # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
       - name: Deploy preview to GitHub Pages
-        working-directory: preview
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          publish_dir: ./preview/build
           user_name: Jeroen van den Hout
           user_email: jlvandenhout@gmail.com
