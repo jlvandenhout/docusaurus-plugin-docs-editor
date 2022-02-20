@@ -19,5 +19,5 @@ jobs:
           node-version: '16.x'
       - name: Check
         run: |
-          yarn install --immutable
+          yarn install
           yarn check
