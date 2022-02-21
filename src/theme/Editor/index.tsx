@@ -61,7 +61,7 @@ import EditorLogin from '@theme/EditorLogin';
 import EditorCodeBlock from '@theme/EditorCodeBlock';
 
 import 'highlight.js/styles/github.css';
-import './Editor.css';
+import './styles.css';
 
 interface GitHub {
   api?: RestEndpointMethods;
@@ -83,7 +83,7 @@ export interface EditorOptions {
 
 interface EditorProps {
   options: {
-    // REQUIRED - The base route to the editor
+    // The base route to the editor
     route: string;
     docs: {
       // The username that owns the docs, defaults to siteConfig.organizationName
@@ -125,39 +125,28 @@ export default function Editor({ options, className }: EditorProps) {
   const [currentContent, setCurrentContent] = useState('');
   const [dirty, setDirty] = useState(false);
 
-  const context = useDocusaurusContext();
-  const editorBasePath = useBaseUrl(options.route || 'edit');
+  const {
+    siteConfig: { organizationName, projectName },
+  } = useDocusaurusContext();
 
-  let docsOwner = context.siteConfig.organizationName;
-  let docsRepo = context.siteConfig.projectName;
-  let docsPath = 'docs';
-  if (options.docs) {
-    docsOwner = options.docs.owner || docsOwner;
-    docsRepo = options.docs.repo || docsRepo;
-    docsPath = options.docs.path || docsPath;
-  }
+  let {
+    route = 'edit',
+    docs: {
+      owner: docsOwner = organizationName,
+      repo: docsRepo = projectName,
+      path: docsPath = 'docs',
+    } = {},
+    static: { path: staticPath = 'static' } = {},
+    github: {
+      clientId: authorizationClientId,
+      tokenUrl: authorizationTokenUrl,
+      method: authorizationMethod = 'GET',
+    } = {},
+  } = options;
 
-  let staticPath = 'static';
-
-  if (options.static) {
-    staticPath = options.static.path || staticPath;
-  }
-
+  const editorBasePath = useBaseUrl(route);
   const authorizationCodeUrl = 'https://github.com/login/oauth/authorize';
   const authorizationScope = 'public_repo';
-  const authorizationClientId = options.github.clientId;
-
-  let authorizationTokenUrl = options.github.tokenUrl;
-  if (authorizationTokenUrl && !authorizationTokenUrl.endsWith('/')) {
-    authorizationTokenUrl += '/';
-  }
-
-  const authorizationMethod = options.github.method
-    ? options.github.method.toUpperCase()
-    : 'GET';
-  if (!['GET', 'POST'].includes(authorizationMethod)) {
-    throw 'Authorization request method must be GET or POST.';
-  }
 
   const editor = useEditor({
     extensions: [
@@ -201,26 +190,25 @@ export default function Editor({ options, className }: EditorProps) {
     window.location.replace(url);
   };
 
-  const requestAuthorizationToken = async (code) => {
-    if (authorizationMethod === 'GET') {
-      const url = new URL(code, authorizationTokenUrl);
+  const requestAuthorizationToken = async (code: string): Promise<Response> => {
+    switch (authorizationMethod) {
+      case 'GET':
+        const url = new URL(code, authorizationTokenUrl);
 
-      return await fetch(url.toString())
-        .then((response) => response.json())
-        .then((data) => data.token);
-    } else if (authorizationMethod === 'POST') {
-      return await fetch(authorizationTokenUrl, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({ code }),
-      })
-        .then((response) => response.json())
-        .then((data) => data.token);
-    } else {
-      throw 'Authorization request method must be GET or POST.';
+        return fetch(url.toString())
+          .then((response) => response.json())
+          .then((data) => data.token);
+      case 'POST':
+        return fetch(authorizationTokenUrl, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ code }),
+        })
+          .then((response) => response.json())
+          .then((data) => data.token);
     }
   };
 
@@ -536,7 +524,6 @@ export default function Editor({ options, className }: EditorProps) {
       .replace(/\/$/, '');
 
     const contentPath = `${docsPath}${filePath}.md`;
-
     const contentBranch = `edit/${contentPath.replace(/[/.]/g, '-')}`;
 
     setGithub(github);

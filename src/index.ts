@@ -7,20 +7,10 @@ function pluginDocsEditor(
   options: EditorOptions,
 ): Plugin<void> {
   let { baseUrl } = context;
-  if (baseUrl.startsWith('/')) {
-    baseUrl = baseUrl.slice(1);
-  }
-  if (baseUrl.endsWith('/')) {
-    baseUrl = baseUrl.slice(0, -1);
-  }
+  baseUrl = baseUrl.replace(/^\/*|\/*$/g, '');
 
-  let route = options.route || 'edit';
-  if (route.startsWith('/')) {
-    route = route.slice(1);
-  }
-  if (route.endsWith('/')) {
-    route = route.slice(0, -1);
-  }
+  let { route = 'edit' } = options;
+  route = route.replace(/^\/*|\/*$/g, '');
 
   const basePath = baseUrl === '' ? `/${route}` : `/${baseUrl}/${route}`;
 

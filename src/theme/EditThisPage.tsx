@@ -4,7 +4,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import { usePluginData } from '@docusaurus/useGlobalData';
 import Translate from '@docusaurus/Translate';
 import { useActivePlugin } from '@docusaurus/plugin-content-docs/client';
-import { EditorOptions } from './Editor';
+import { EditorOptions } from '@theme/Editor';
 
 interface EditThisPageProps {
   editUrl: string;
@@ -12,23 +12,24 @@ interface EditThisPageProps {
 
 export default function EditThisPage({ editUrl }: EditThisPageProps) {
   const { pathname } = useLocation();
+  console.log(pathname);
   const activePlugin = useActivePlugin();
-  const editorOptions = usePluginData(
+  console.log(activePlugin);
+  const { route } = usePluginData(
     'docusaurus-plugin-docs-editor',
   ) as EditorOptions;
 
   const getPath = () => {
     if (activePlugin) {
-      let relativePath = pathname;
-      if (pathname.startsWith('/')) {
-        relativePath = relativePath.slice(1);
-      }
-      return `/${editorOptions.route}/${relativePath}`;
+      let relativePath = pathname.replace(/^\/*|\/*$/g, '');
+      return `/${route}/${relativePath}`;
     }
   };
 
   const docPath = getPath();
+  console.log(docPath);
   const editPath = useBaseUrl(docPath);
+  console.log(editPath);
 
   return (
     <>
