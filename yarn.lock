@@ -2194,6 +2194,7 @@ __metadata:
     "@tiptap/react": ^2.0.0-beta.55
     "@types/eslint": ^8
     "@types/prettier": ^2
+    "@types/urijs": ^1
     "@typescript-eslint/eslint-plugin": ^5.12.0
     "@typescript-eslint/parser": ^5.12.0
     base-64: ^1.0.0
@@ -2219,6 +2220,7 @@ __metadata:
     remark-unwrap-images: ^3.0.1
     typescript: ^4.5.5
     unified: ^10.1.1
+    urijs: ^1.19.8
     utf8: ^3.0.0
     yaml: ^1.10.2
   peerDependencies:
@@ -3450,6 +3452,13 @@ __metadata:
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
   checksum: 25cb860ff10dde48b54622d58b23e66214211a61c84c0f15f88d38b61aa1b53d4d46e42b557924a93178c501c166aa37e28d7f6d994aba13d24685326272d5db
+  languageName: node
+  linkType: hard
+
+"@types/urijs@npm:^1":
+  version: 1.19.18
+  resolution: "@types/urijs@npm:1.19.18"
+  checksum: 1705ad3e7dcd23c2e0a15b207c48d710d66bd66fc96d77bcc528f1a880dc61a45ec173ad85ac3725a7261b14009b84fa5ac1b72a5e21266d2695013ce7c29a2a
   languageName: node
   linkType: hard
 
@@ -13335,6 +13344,13 @@ __metadata:
   dependencies:
     punycode: ^2.1.0
   checksum: 7167432de6817fe8e9e0c9684f1d2de2bb688c94388f7569f7dbdb1587c9f4ca2a77962f134ec90be0cc4d004c939ff0d05acc9f34a0db39a3c797dada262633
+  languageName: node
+  linkType: hard
+
+"urijs@npm:^1.19.8":
+  version: 1.19.8
+  resolution: "urijs@npm:1.19.8"
+  checksum: 0e7d4da86c14b3e353a5563df8130385f5dc9e7b4e8a36a52b7ed6d25a0477e77d422987365279c2e5545679d7910f120f1a3bb76f8d3de4a37bc1ccd91727fb
   languageName: node
   linkType: hard
 
