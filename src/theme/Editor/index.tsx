@@ -7,6 +7,7 @@ import URI from 'urijs';
 import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { usePluginData } from '@docusaurus/useGlobalData';
+import Head from '@docusaurus/Head';
 import { useLocation } from '@docusaurus/router';
 
 import { lowlight } from 'lowlight/lib/core';
@@ -570,6 +571,9 @@ export default function Editor({ options, className }: EditorProps) {
 
   return (
     <>
+      <Head>
+        <title>Editor</title>
+      </Head>
       {github ? (
         <div className={clsx('editor', className)}>
           <div className='editor__announcements padding-horiz--md padding-vert--xs'>
