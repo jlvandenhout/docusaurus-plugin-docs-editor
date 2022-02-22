@@ -9,7 +9,7 @@
   "scripts": {
     "build": "docusaurus-plugin build",
     "watch": "docusaurus-plugin watch",
-    "start": "yarn build && concurrently \"yarn watch\" \"env-cmd yarn workspace preview start\"",
+    "start": "yarn build && concurrently \"yarn watch\" \"yarn workspace preview start\"",
     "check": "prettier --check . && eslint --cache . && tsc",
     "fix": "prettier --write . && eslint --cache --fix ."
   },
@@ -70,7 +70,6 @@
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "concurrently": "^7.0.0",
-    "env-cmd": "^10.1.0",
     "eslint": "^8.9.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-react": "^7.28.0",

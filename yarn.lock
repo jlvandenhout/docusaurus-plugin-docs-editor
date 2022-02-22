@@ -2200,7 +2200,6 @@ __metadata:
     base-64: ^1.0.0
     clsx: ^1.1.1
     concurrently: ^7.0.0
-    env-cmd: ^10.1.0
     eslint: ^8.9.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-react: ^7.28.0
@@ -10594,6 +10593,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.12.0
     "@typescript-eslint/parser": ^5.12.0
     clsx: ^1.1.1
+    env-cmd: ^10.1.0
     eslint: ^8.9.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-react: ^7.28.0
