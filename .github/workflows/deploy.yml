@@ -24,7 +24,6 @@ jobs:
         env:
           AUTHORIZATION_CLIENT_ID: efc6c2ca30ec308ce283
           AUTHORIZATION_TOKEN_URL: https://polar-falls-16277.herokuapp.com/authenticate/
-          AUTHORIZATION_METHOD: GET
         run: |
           yarn install
           yarn build
