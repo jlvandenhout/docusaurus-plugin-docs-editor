@@ -7,9 +7,23 @@ function pluginDocsEditor(
   context: LoadContext,
   options: EditorOptions,
 ): Plugin<void> {
-  const { baseUrl } = context;
-  const { route = 'edit' } = options;
-  const basePath = URI.joinPaths(baseUrl, route).toString();
+  const { siteConfig: {
+    baseUrl,
+    organizationName,
+    projectName,
+  }} = context;
+
+  const defaultOptions = {
+    authorizationMethod: 'GET',
+    contentOwner: organizationName,
+    contentRepo: projectName,
+    contentDocsPath: 'docs',
+    contentStaticPath: 'static',
+    editorPath: 'edit',
+  }
+  
+  const normalizedOptions = Object.assign({}, defaultOptions, options);
+  const editorBasePath = URI.joinPaths(baseUrl, normalizedOptions.editorPath).toString();
 
   return {
     name: 'docusaurus-plugin-docs-editor',
@@ -21,11 +35,11 @@ function pluginDocsEditor(
 
       const optionsPath = await createData(
         'editor.json',
-        JSON.stringify(options),
+        JSON.stringify(normalizedOptions),
       );
 
       addRoute({
-        path: basePath,
+        path: editorBasePath,
         exact: false,
         component: '@theme/Editor',
         modules: {
@@ -34,7 +48,7 @@ function pluginDocsEditor(
       });
 
       setGlobalData({
-        basePath,
+        editorBasePath,
       });
     },
   };

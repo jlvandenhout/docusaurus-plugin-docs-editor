@@ -30,10 +30,8 @@ module.exports = {
     [
       '@jlvandenhout/docusaurus-plugin-docs-editor',
       {
-        github: {
-          clientId: '99999999999',
-          tokenUrl: 'http://localhost:9999/authorization/',
-        },
+        authorizationClientId: '99999999999',
+        authorizationTokenUrl: 'http://localhost:9999/authorization/',
       },
     ],
   ],
@@ -42,13 +40,13 @@ module.exports = {
 
 ## Configuration
 
-| Option          | Required | Explanation                                                               |
-| --------------- | :------: | ------------------------------------------------------------------------- |
-| route           |          | The editor endpoint. Defaults to 'edit'.                                  |
-| github.clientId |    x     | The client ID of the GitHub OAuth app.                                    |
-| github.tokenUrl |    x     | The URL to your authorization server endpoint.                            |
-| github.method   |          | The request method to use (GET or POST). Defaults to 'GET'.               |
-| docs.owner      |          | The owner of the repository. Defaults to `siteConfig.organizationName`.   |
-| docs.repo       |          | The name of the repository. Defaults to `siteConfig.projectName`.         |
-| docs.path       |          | The path to the documentation in the repository. Defaults to 'docs'.      |
-| static.path     |          | The path to the static directory in the repository. Defaults to 'static'. |
+| Option                | Required | Explanation                                                               |
+| --------------------- | :------: | ------------------------------------------------------------------------- |
+| authorizationClientId |    x     | The client ID of the GitHub OAuth app.                                    |
+| authorizationTokenUrl |    x     | The URL to your authorization server endpoint.                            |
+| authorizationMethod   |          | The request method to use (GET or POST). Defaults to 'GET'.               |
+| contentOwner          |          | The owner of the repository. Defaults to `siteConfig.organizationName`.   |
+| contentRepo           |          | The name of the repository. Defaults to `siteConfig.projectName`.         |
+| contentDocsPath       |          | The path to the documentation in the repository. Defaults to 'docs'.      |
+| contentStaticPath     |          | The path to the static directory in the repository. Defaults to 'static'. |
+| editorPath            |          | The editor endpoint. Defaults to 'edit'.                                  |

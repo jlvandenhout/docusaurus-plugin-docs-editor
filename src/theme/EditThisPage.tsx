@@ -13,7 +13,7 @@ interface EditThisPageProps {
 export default function EditThisPage({ editUrl }: EditThisPageProps) {
   const { pathname } = useLocation();
   const activePlugin = useActivePlugin();
-  const { basePath } = usePluginData(
+  const { editorBasePath } = usePluginData(
     'docusaurus-plugin-docs-editor',
   ) as EditorData;
 
@@ -24,7 +24,7 @@ export default function EditThisPage({ editUrl }: EditThisPageProps) {
       } = activePlugin;
 
       const relativePath = new URI(pathname).relativeTo(path + '/');
-      return URI.joinPaths(basePath, relativePath).toString();
+      return URI.joinPaths(editorBasePath, relativePath).toString();
     }
   };
 

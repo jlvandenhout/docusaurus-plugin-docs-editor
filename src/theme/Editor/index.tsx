@@ -5,7 +5,6 @@ import utf8 from 'utf8';
 import URI from 'urijs';
 
 import clsx from 'clsx';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { usePluginData } from '@docusaurus/useGlobalData';
 import Head from '@docusaurus/Head';
 import { useLocation } from '@docusaurus/router';
@@ -81,24 +80,18 @@ lowlight.registerLanguage('rust', rust);
 lowlight.registerLanguage('shell', shell);
 
 export interface EditorOptions {
-  route: string;
-  docs: {
-    owner: string;
-    repo: string;
-    path: string;
-  };
-  static: {
-    path: string;
-  };
-  github: {
-    clientId: string;
-    tokenUrl: string;
-    method: 'GET' | 'POST';
-  };
+  authorizationClientId: string;
+  authorizationTokenUrl: string;
+  authorizationMethod: 'GET' | 'POST';
+  contentOwner: string;
+  contentRepo: string;
+  contentDocsPath: string;
+  contentStaticPath: string;
+  editorPath: string;
 }
 
 export interface EditorData {
-  basePath: string;
+  editorBasePath: string;
 }
 
 interface EditorProps {
@@ -120,29 +113,19 @@ export default function Editor({ options, className }: EditorProps) {
   const [currentContent, setCurrentContent] = useState('');
   const [dirty, setDirty] = useState(false);
 
-  const { basePath: editorBasePath } = usePluginData(
+  const { editorBasePath } = usePluginData(
     'docusaurus-plugin-docs-editor',
   ) as EditorData;
-
-  const { pathname } = useLocation();
-
   const {
-    siteConfig: { organizationName, projectName },
-  } = useDocusaurusContext();
-
-  const {
-    docs: {
-      owner: docsOwner = organizationName,
-      repo: docsRepo = projectName,
-      path: docsPath = 'docs',
-    } = {},
-    static: { path: staticPath = 'static' } = {},
-    github: {
-      clientId: authorizationClientId,
-      tokenUrl: authorizationTokenUrl,
-      method: authorizationMethod = 'GET',
-    } = {},
+    authorizationClientId,
+    authorizationTokenUrl,
+    authorizationMethod,
+    contentOwner,
+    contentRepo,
+    contentDocsPath,
+    contentStaticPath,
   } = options;
+  const { pathname } = useLocation();
 
   const authorizationCodeUrl = 'https://github.com/login/oauth/authorize';
   const authorizationScope = 'public_repo';
@@ -248,8 +231,8 @@ export default function Editor({ options, className }: EditorProps) {
         owner: { login: originOwner },
       },
     } = await github.api.repos.createFork({
-      owner: docsOwner,
-      repo: docsRepo,
+      owner: contentOwner,
+      repo: contentRepo,
     });
 
     return await new Promise((resolve, reject) => {
@@ -282,7 +265,7 @@ export default function Editor({ options, className }: EditorProps) {
       });
     } catch (error) {
       // TODO: Follow 301 response in case repo was renamed
-      if (error.status === 404 && owner !== docsOwner) {
+      if (error.status === 404 && owner !== contentOwner) {
         response = await createRepo();
       } else {
         throw error;
@@ -298,17 +281,17 @@ export default function Editor({ options, className }: EditorProps) {
     } = response;
 
     // Sanity check to verify the repo is indeed a fork
-    if (originOwner !== docsOwner) {
+    if (originOwner !== contentOwner) {
       if (upstream) {
         const {
           name: upstreamRepo,
           owner: { login: upstreamOwner },
         } = upstream;
-        if (upstreamOwner !== docsOwner && upstreamRepo !== docsRepo) {
-          throw `Repo is not a fork of ${docsOwner}/${docsRepo}`;
+        if (upstreamOwner !== contentOwner && upstreamRepo !== contentRepo) {
+          throw `Repo is not a fork of ${contentOwner}/${contentRepo}`;
         }
       } else {
-        throw `Repo is not a fork of ${docsOwner}/${docsRepo}`;
+        throw `Repo is not a fork of ${contentOwner}/${contentRepo}`;
       }
     }
 
@@ -319,8 +302,8 @@ export default function Editor({ options, className }: EditorProps) {
     const {
       data: { default_branch: contentDefaultBranch },
     } = await github.api.repos.get({
-      owner: docsOwner,
-      repo: docsRepo,
+      owner: contentOwner,
+      repo: contentRepo,
     });
 
     const {
@@ -328,8 +311,8 @@ export default function Editor({ options, className }: EditorProps) {
         commit: { sha },
       },
     } = await github.api.repos.getBranch({
-      owner: docsOwner,
-      repo: docsRepo,
+      owner: contentOwner,
+      repo: contentRepo,
       branch: contentDefaultBranch,
     });
 
@@ -372,7 +355,7 @@ export default function Editor({ options, className }: EditorProps) {
     const { content: data } = response as GitHubContent;
     const markdown = utf8.decode(base64.decode(data));
 
-    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`;
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${contentStaticPath}/`;
 
     const markdownToHtmlProcessor = unified()
       .use(markdownParse)
@@ -393,7 +376,7 @@ export default function Editor({ options, className }: EditorProps) {
   };
 
   const requestCommit = async (owner, repo, branch, path) => {
-    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${staticPath}/`;
+    const staticContentBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${contentStaticPath}/`;
     const removeImageBaseUrl = (url) => {
       const imageUrl = new URI(url);
       return imageUrl.relativeTo(staticContentBaseUrl).toString();
@@ -478,8 +461,8 @@ export default function Editor({ options, className }: EditorProps) {
     const head = `${owner}:${branch}`;
 
     const { data: pulls } = await github.api.pulls.list({
-      owner: docsOwner,
-      repo: docsRepo,
+      owner: contentOwner,
+      repo: contentRepo,
       state: 'open',
       head,
     });
@@ -493,16 +476,16 @@ export default function Editor({ options, className }: EditorProps) {
       const {
         data: { default_branch: contentDefaultBranch },
       } = await github.api.repos.get({
-        owner: docsOwner,
-        repo: docsRepo,
+        owner: contentOwner,
+        repo: contentRepo,
       });
 
       // TODO: Allow user to write a pull request title and description
       const {
         data: { html_url },
       } = await github.api.pulls.create({
-        owner: docsOwner,
-        repo: docsRepo,
+        owner: contentOwner,
+        repo: contentRepo,
         base: contentDefaultBranch,
         head,
         title: `Edit ${contentPath}`,
@@ -518,7 +501,7 @@ export default function Editor({ options, className }: EditorProps) {
     const filePath = new URI(pathname)
       .relativeTo(editorBasePath + '/')
       .toString();
-    const contentPath = URI.joinPaths(docsPath, filePath)
+    const contentPath = URI.joinPaths(contentDocsPath, filePath)
       .suffix('md')
       .toString();
     console.log(contentPath);
@@ -530,21 +513,21 @@ export default function Editor({ options, className }: EditorProps) {
   };
 
   const open = async () => {
-    const { owner, repo } = await requestRepo(github.user, docsRepo);
+    const { owner, repo } = await requestRepo(github.user, contentRepo);
     const branch = await requestBranch(owner, repo, contentBranch);
     await requestContent(owner, repo, branch, contentPath);
   };
 
   const save = async () => {
     if (dirty) {
-      const { owner, repo } = await requestRepo(github.user, docsRepo);
+      const { owner, repo } = await requestRepo(github.user, contentRepo);
       const branch = await requestBranch(owner, repo, contentBranch);
       await requestCommit(owner, repo, branch, contentPath);
     }
   };
 
   const submit = async () => {
-    const { owner, repo } = await requestRepo(github.user, docsRepo);
+    const { owner, repo } = await requestRepo(github.user, contentRepo);
     const branch = await requestBranch(owner, repo, contentBranch);
     if (dirty) {
       await requestCommit(owner, repo, branch, contentPath);
