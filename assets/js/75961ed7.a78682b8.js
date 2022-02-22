@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkpreview=self.webpackChunkpreview||[]).push([[284],{150:function(e){e.exports=JSON.parse('{"github":{"clientId":"efc6c2ca30ec308ce283","tokenUrl":"https://polar-falls-16277.herokuapp.com/authenticate/","method":"GET"},"id":"default"}')}}]);
