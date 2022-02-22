@@ -7,11 +7,9 @@ function pluginDocsEditor(
   context: LoadContext,
   options: EditorOptions,
 ): Plugin<void> {
-  const { siteConfig: {
-    baseUrl,
-    organizationName,
-    projectName,
-  }} = context;
+  const {
+    siteConfig: { baseUrl, organizationName, projectName },
+  } = context;
 
   const defaultOptions = {
     authorizationMethod: 'GET',
@@ -20,10 +18,13 @@ function pluginDocsEditor(
     contentDocsPath: 'docs',
     contentStaticPath: 'static',
     editorPath: 'edit',
-  }
-  
+  };
+
   const normalizedOptions = Object.assign({}, defaultOptions, options);
-  const editorBasePath = URI.joinPaths(baseUrl, normalizedOptions.editorPath).toString();
+  const editorBasePath = URI.joinPaths(
+    baseUrl,
+    normalizedOptions.editorPath,
+  ).toString();
 
   return {
     name: 'docusaurus-plugin-docs-editor',
