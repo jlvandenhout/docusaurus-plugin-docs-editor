@@ -1,4 +1,5 @@
 import path from 'path';
+import URI from 'urijs';
 import { LoadContext, Plugin } from '@docusaurus/types';
 import { EditorOptions } from '@theme/Editor';
 
@@ -6,13 +7,9 @@ function pluginDocsEditor(
   context: LoadContext,
   options: EditorOptions,
 ): Plugin<void> {
-  let { baseUrl } = context;
-  baseUrl = baseUrl.replace(/^\/*|\/*$/g, '');
-
-  let { route = 'edit' } = options;
-  route = route.replace(/^\/*|\/*$/g, '');
-
-  const basePath = baseUrl === '' ? `/${route}` : `/${baseUrl}/${route}`;
+  const { baseUrl } = context;
+  const { route = 'edit' } = options;
+  const basePath = URI.joinPaths(baseUrl, route).toString();
 
   return {
     name: 'docusaurus-plugin-docs-editor',
@@ -37,7 +34,7 @@ function pluginDocsEditor(
       });
 
       setGlobalData({
-        route,
+        basePath,
       });
     },
   };

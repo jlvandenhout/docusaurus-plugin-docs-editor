@@ -1,10 +1,10 @@
 import React from 'react';
-import { useLocation } from '@docusaurus/router';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import URI from 'urijs';
 import { usePluginData } from '@docusaurus/useGlobalData';
+import { useLocation } from '@docusaurus/router';
 import Translate from '@docusaurus/Translate';
 import { useActivePlugin } from '@docusaurus/plugin-content-docs/client';
-import { EditorOptions } from '@theme/Editor';
+import { EditorData } from '@theme/Editor';
 
 interface EditThisPageProps {
   editUrl: string;
@@ -12,28 +12,28 @@ interface EditThisPageProps {
 
 export default function EditThisPage({ editUrl }: EditThisPageProps) {
   const { pathname } = useLocation();
-  console.log(pathname);
   const activePlugin = useActivePlugin();
-  console.log(activePlugin);
-  const { route } = usePluginData(
+  const { basePath } = usePluginData(
     'docusaurus-plugin-docs-editor',
-  ) as EditorOptions;
+  ) as EditorData;
 
   const getPath = () => {
     if (activePlugin) {
-      let relativePath = pathname.replace(/^\/*|\/*$/g, '');
-      return `/${route}/${relativePath}`;
+      const {
+        pluginData: { path },
+      } = activePlugin;
+
+      const relativePath = new URI(pathname).relativeTo(path + '/');
+      return URI.joinPaths(basePath, relativePath).toString();
     }
   };
 
-  const docPath = getPath();
-  console.log(docPath);
-  const editPath = useBaseUrl(docPath);
+  const editPath = getPath();
   console.log(editPath);
 
   return (
     <>
-      {docPath && (
+      {editPath && (
         <>
           <a href={editPath} target='_blank' rel='noreferrer noopener'>
             Open in editor
