@@ -1,0 +1,8 @@
+[submodule "preview/website"]
+	path = preview/website
+	url = https://github.com/jlvandenhout/docusaurus-plugin-docs-editor-preview.git
+	branch = main
+[submodule "preview/server"]
+	path = preview/server
+	url = https://github.com/prose/gatekeeper.git
+	branch = master
