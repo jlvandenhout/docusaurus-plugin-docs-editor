@@ -1,3 +1,0 @@
-[submodule "preview"]
-	path = preview
-	url = https://github.com/jlvandenhout/docusaurus-plugin-docs-editor-preview.git
