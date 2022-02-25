@@ -2153,7 +2153,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jlvandenhout/docusaurus-plugin-docs-editor@workspace:.":
+"@jlvandenhout/docusaurus-plugin-docs-editor@workspace:., @jlvandenhout/docusaurus-plugin-docs-editor@workspace:^":
   version: 0.0.0-use.local
   resolution: "@jlvandenhout/docusaurus-plugin-docs-editor@workspace:."
   dependencies:
@@ -14190,6 +14190,7 @@ __metadata:
     "@docusaurus/core": 2.0.0-beta.16
     "@docusaurus/module-type-aliases": 2.0.0-beta.16
     "@docusaurus/preset-classic": 2.0.0-beta.16
+    "@jlvandenhout/docusaurus-plugin-docs-editor": "workspace:^"
     "@mdx-js/react": ^1.6.22
     "@tsconfig/docusaurus": ^1.0.4
     clsx: ^1.1.1
