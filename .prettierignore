@@ -1,6 +1,6 @@
 # Dependencies
 /node_modules
-/preview/server
+/preview
 
 # Production
 /lib
