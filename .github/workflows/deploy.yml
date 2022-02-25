@@ -22,8 +22,8 @@ jobs:
       - name: Build preview
         working-directory: preview
         env:
-          AUTHORIZATION_CLIENT_ID: efc6c2ca30ec308ce283
-          AUTHORIZATION_TOKEN_URL: https://polar-falls-16277.herokuapp.com/authenticate/
+          OAUTH_CLIENT_ID: efc6c2ca30ec308ce283
+          OAUTH_TOKEN_URL: https://polar-falls-16277.herokuapp.com/authenticate/
         run: |
           yarn install
           yarn build
