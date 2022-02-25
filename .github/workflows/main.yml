@@ -1,0 +1,85 @@
+name: Main
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - created
+
+jobs:
+  check:
+    name: Check package
+    runs-on: ubuntu-latest
+    if: github.event_name != 'release'
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - name: Check plugin
+        run: |
+          yarn install --immutable
+          yarn check
+  preview:
+    name: Publish preview
+    needs: check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - name: Build plugin
+        run: |
+          yarn install
+          yarn build
+      - name: Build preview
+        env:
+          OAUTH_CLIENT_ID: efc6c2ca30ec308ce283
+          OAUTH_TOKEN_URL: https://polar-falls-16277.herokuapp.com/authenticate/
+        run: yarn workspace website build
+      - name: Publish preview on GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./preview/website/build
+          user_name: Jeroen van den Hout
+          user_email: jlvandenhout@gmail.com
+  package:
+    name: Publish package
+    needs: check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    needs: check
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Build plugin
+      - run: |
+          yarn install
+          yarn build
+      - name: Publish package on NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: yarn npm publish --access public
+      - uses: actions/setup-node@v2
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+      - name: Publish package on GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn npm publish --access public
