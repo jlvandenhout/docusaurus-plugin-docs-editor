@@ -104,8 +104,6 @@ export default function Editor({ options, className }: EditorProps) {
   const [pullrequest, setPullrequest] = useState('');
 
   const [contentFrontmatter, setContentFrontmatter] = useState({});
-  const [contentBranch, setContentBranch] = useState('');
-  const [contentPath, setContentPath] = useState('');
 
   const [github, setGithub] = useState({} as GitHub);
   const [syncing, setSyncing] = useState(false);
@@ -113,9 +111,6 @@ export default function Editor({ options, className }: EditorProps) {
   const [currentContent, setCurrentContent] = useState('');
   const [dirty, setDirty] = useState(false);
 
-  const { editorBasePath } = usePluginData(
-    'docusaurus-plugin-docs-editor',
-  ) as EditorData;
   const {
     authorizationClientId,
     authorizationTokenUrl,
@@ -125,7 +120,19 @@ export default function Editor({ options, className }: EditorProps) {
     contentDocsPath,
     contentStaticPath,
   } = options;
+
   const { pathname } = useLocation();
+  const { editorBasePath } = usePluginData(
+    'docusaurus-plugin-docs-editor',
+  ) as EditorData;
+
+  const filePath = new URI(pathname)
+    .relativeTo(editorBasePath + '/')
+    .toString();
+  const contentPath = URI.joinPaths(contentDocsPath, filePath)
+    .suffix('md')
+    .toString();
+  const contentBranch = `edit/${contentPath.replace(/[/.]/g, '-')}`;
 
   const authorizationCodeUrl = 'https://github.com/login/oauth/authorize';
   const authorizationScope = 'public_repo';
@@ -188,9 +195,7 @@ export default function Editor({ options, className }: EditorProps) {
           },
           body: JSON.stringify({ code }),
         })
-          .then((response) => {
-            return response.json();
-          })
+          .then((response) => response.json())
           .then((data) => data.token);
     }
   };
@@ -208,6 +213,7 @@ export default function Editor({ options, className }: EditorProps) {
 
       hook.error('request', async (error) => {
         if (error instanceof RequestError && error.status === 403) {
+          // TODO: Change to more graceful solution then just re-request.
           await requestAuthorization();
         } else {
           throw error;
@@ -497,19 +503,7 @@ export default function Editor({ options, className }: EditorProps) {
 
   const init = async () => {
     const github = await requestAuthorization();
-
-    const filePath = new URI(pathname)
-      .relativeTo(editorBasePath + '/')
-      .toString();
-    const contentPath = URI.joinPaths(contentDocsPath, filePath)
-      .suffix('md')
-      .toString();
-    console.log(contentPath);
-    const contentBranch = `edit/${contentPath.replace(/[/.]/g, '-')}`;
-
     setGithub(github);
-    setContentBranch(contentBranch);
-    setContentPath(contentPath);
   };
 
   const open = async () => {
@@ -543,10 +537,10 @@ export default function Editor({ options, className }: EditorProps) {
   }, []);
 
   useEffect(() => {
-    if (github && contentBranch && contentPath) {
+    if (github.user && github.api) {
       open();
     }
-  }, [github, contentBranch, contentPath]);
+  }, [github]);
 
   useEffect(() => {
     setDirty(currentContent !== savedContent);
@@ -555,9 +549,9 @@ export default function Editor({ options, className }: EditorProps) {
   return (
     <>
       <Head>
-        <title>Editor</title>
+        <title>Editor | {filePath}</title>
       </Head>
-      {github ? (
+      {github.user && github.api ? (
         <div className={clsx('editor', className)}>
           <div className='editor__announcements padding-horiz--md padding-vert--xs'>
             {announcement}
