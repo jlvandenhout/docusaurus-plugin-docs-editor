@@ -68,7 +68,7 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
       - name: Build plugin
-      - run: |
+        run: |
           yarn install
           yarn build
       - name: Publish package on NPM
