@@ -129,3 +129,7 @@
   color: var(--ifm-color-gray-600);
   background-color: var(--ifm-color-gray-900);
 }
+
+.ProseMirror-focused:focus {
+  outline: none;
+}
