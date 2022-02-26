@@ -15,7 +15,6 @@ jobs:
   check:
     name: Check package
     runs-on: ubuntu-latest
-    if: github.event_name != 'release'
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
