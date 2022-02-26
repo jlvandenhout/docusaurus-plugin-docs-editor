@@ -67,19 +67,21 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
-          registry-url: 'https://registry.npmjs.org'
       - name: Build plugin
         run: |
           yarn install
           yarn build
       - name: Publish package on NPM
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn npm publish --access public
-      - uses: actions/setup-node@v2
-        with:
-          registry-url: 'https://npm.pkg.github.com'
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          yarn config set npmPublishRegistry 'https://registry.npmjs.org'
+          yarn config set npmAuthToken $NPM_AUTH_TOKEN
+          yarn npm publish --access public
       - name: Publish package on GitHub Packages
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn npm publish --access public
+          NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yarn config set npmPublishRegistry 'https://npm.pkg.github.com'
+          yarn config set npmAuthToken $NPM_AUTH_TOKEN
+          yarn npm publish --access public
