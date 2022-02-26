@@ -29,7 +29,6 @@ export default function EditThisPage({ editUrl }: EditThisPageProps) {
   };
 
   const editPath = getPath();
-  console.log(editPath);
 
   return (
     <>
