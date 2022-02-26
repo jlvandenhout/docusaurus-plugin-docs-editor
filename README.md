@@ -57,7 +57,7 @@ After building your Docusaurus application, you should now find the link to edit
 
 ## Local testing
 
-This repository provides a `preview` directory containing the [live preview](https://jlvandenhout.github.io/docusaurus-plugin-docs-editor-preview) repository and [Gatekeeper](https://github.com/prose/gatekeeper) repository as submodules. They are configured using environment variables or an `.env` file (see the [`.env.example`](.env.example) file). You will still need to set up a GitHub OAuth app yourself using `http://localhost` as authorization callback URL.
+This repository provides a `preview` directory containing the [live preview](https://github.com/jlvandenhout/docusaurus-plugin-docs-editor-preview) repository and [Gatekeeper](https://github.com/prose/gatekeeper) repository as submodules. They are configured using environment variables or an `.env` file (see the [`.env.example`](.env.example) file). You will still need to set up a GitHub OAuth app yourself using `http://localhost` as authorization callback URL.
 
 For a local setup, first clone this repository including submodules:
 
